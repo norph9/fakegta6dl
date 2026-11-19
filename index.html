@@ -1,0 +1,2160 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTA VI — Multi-Platform Download Simulator (PS5 • Xbox • Steam)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        display: ['Outfit', 'Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        ps5: {
+                            bg: '#0b101b',
+                            card: '#141d2f',
+                            accent: '#0070d1',
+                            glow: '#00a2ff',
+                            gold: '#d99b43'
+                        },
+                        xbox: {
+                            bg: '#101010',
+                            rail: '#161616',
+                            card: '#1f1f1f',
+                            green: '#107C10',
+                            bright: '#2ca22c',
+                        },
+                        steam: {
+                            chrome: '#171d25',
+                            bg: '#1b2838',
+                            panel: '#141b24',
+                            card: '#232933',
+                            blue: '#1a9fff',
+                            green: '#5ba32b',
+                        },
+                        vice: {
+                            pink: '#ff2a85',
+                            orange: '#ff7b00',
+                            purple: '#7928ca',
+                            cyan: '#00f0ff'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Pre-register PNG fallback generator in <head> before any <img> tags are parsed -->
+    <script>
+        window.generatePngDataUrl = function (filename) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const name = (filename || '').split('/').pop();
+
+            // 1. Game Artwork & User Avatars
+            if (name === 'art-gtavi-logo.png' || name === 'art-gtavi-cover-square.png') {
+                canvas.width = 240;
+                canvas.height = 240;
+                const grad = ctx.createLinearGradient(0, 0, 0, 240);
+                grad.addColorStop(0, '#1d0b38');
+                grad.addColorStop(0.55, '#ff2a85');
+                grad.addColorStop(1, '#ff8c00');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, 240, 240);
+
+                ctx.fillStyle = '#090414';
+                ctx.fillRect(0, 188, 240, 52);
+
+                ctx.font = '900 108px Outfit, Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.lineWidth = 7;
+                ctx.strokeStyle = '#ffffff';
+                ctx.strokeText('VI', 120, 118);
+                ctx.fillStyle = '#090414';
+                ctx.fillText('VI', 120, 118);
+
+                ctx.fillStyle = '#090414';
+                ctx.fillRect(26, 98, 188, 24);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '800 12px Inter, sans-serif';
+                ctx.fillText('GRAND THEFT AUTO', 120, 110);
+                return canvas.toDataURL('image/png');
+            }
+
+            if (name === 'art-gtavi-steam-hero.png' || name === 'art-gtavi-steam-capsule.png') {
+                canvas.width = 360;
+                canvas.height = 160;
+                const grad = ctx.createLinearGradient(0, 0, 360, 160);
+                grad.addColorStop(0, '#1d0b38');
+                grad.addColorStop(0.5, '#ff2a85');
+                grad.addColorStop(1, '#ff8c00');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, 360, 160);
+
+                ctx.fillStyle = '#090414';
+                ctx.fillRect(0, 126, 360, 34);
+
+                ctx.font = '900 84px Outfit, Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.lineWidth = 5;
+                ctx.strokeStyle = '#ffffff';
+                ctx.strokeText('VI', 180, 76);
+                ctx.fillStyle = '#090414';
+                ctx.fillText('VI', 180, 76);
+
+                ctx.fillStyle = '#090414';
+                ctx.fillRect(68, 64, 224, 20);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '800 11px Inter, sans-serif';
+                ctx.fillText('GRAND THEFT AUTO', 180, 74);
+                return canvas.toDataURL('image/png');
+            }
+
+            if (name === 'art-user-avatar.png') {
+                canvas.width = 96;
+                canvas.height = 96;
+                const grad = ctx.createLinearGradient(0, 0, 96, 96);
+                grad.addColorStop(0, '#ff2a85');
+                grad.addColorStop(0.5, '#7928ca');
+                grad.addColorStop(1, '#0070d1');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, 96, 96);
+
+                const activeUser = (window.state && window.state.username) ? window.state.username : 'ViceCity_86';
+                const initial = activeUser.charAt(0).toUpperCase();
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '800 48px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(initial, 48, 50);
+                return canvas.toDataURL('image/png');
+            }
+
+            // 2. Platform Logos
+            if (name === 'logo-ps5.png') {
+                canvas.width = 96;
+                canvas.height = 96;
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '900 38px Outfit, Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('PS5', 48, 50);
+                return canvas.toDataURL('image/png');
+            }
+
+            if (name === 'logo-xbox.png') {
+                canvas.width = 96;
+                canvas.height = 96;
+                ctx.beginPath();
+                ctx.arc(48, 48, 38, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+                ctx.strokeStyle = '#107c10';
+                ctx.lineWidth = 8;
+                ctx.beginPath();
+                ctx.moveTo(26, 26);
+                ctx.lineTo(70, 70);
+                ctx.moveTo(70, 26);
+                ctx.lineTo(26, 70);
+                ctx.stroke();
+                return canvas.toDataURL('image/png');
+            }
+
+            if (name === 'logo-steam.png') {
+                canvas.width = 96;
+                canvas.height = 96;
+                ctx.strokeStyle = '#ffffff';
+                ctx.fillStyle = '#ffffff';
+                ctx.lineWidth = 7;
+                ctx.beginPath();
+                ctx.arc(60, 34, 15, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(32, 64, 11, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(32, 64);
+                ctx.lineTo(60, 34);
+                ctx.stroke();
+                return canvas.toDataURL('image/png');
+            }
+
+            // 3. Badges
+            if (name === 'ps5-badge-version.png') {
+                canvas.width = 76;
+                canvas.height = 32;
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, 76, 32);
+                ctx.fillStyle = '#000000';
+                ctx.font = '900 22px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('PS5', 38, 17);
+                return canvas.toDataURL('image/png');
+            }
+
+            if (name === 'xbox-badge-xs.png') {
+                canvas.width = 76;
+                canvas.height = 34;
+                ctx.fillStyle = '#0a0a0a';
+                ctx.fillRect(0, 0, 76, 34);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(1.5, 1.5, 73, 31);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '900 20px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('X|S', 38, 18);
+                return canvas.toDataURL('image/png');
+            }
+
+            // 4. Standard 64x64 UI & Controller Icons
+            canvas.width = 64;
+            canvas.height = 64;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            switch (name) {
+                case 'ps5-icon-downloads-header.png':
+                case 'steam-icon-downloads-footer.png':
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 5;
+                    ctx.lineCap = 'round';
+                    ctx.beginPath();
+                    ctx.moveTo(32, 12);
+                    ctx.lineTo(32, 46);
+                    ctx.moveTo(18, 34);
+                    ctx.lineTo(32, 48);
+                    ctx.lineTo(46, 34);
+                    ctx.moveTo(16, 54);
+                    ctx.lineTo(48, 54);
+                    ctx.stroke();
+                    break;
+
+                case 'ps5-btn-cross.png':
+                    ctx.beginPath();
+                    ctx.arc(32, 32, 26, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255,255,255,0.18)';
+                    ctx.fill();
+                    ctx.lineWidth = 3;
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.stroke();
+                    ctx.lineWidth = 4;
+                    ctx.beginPath();
+                    ctx.moveTo(22, 22);
+                    ctx.lineTo(42, 42);
+                    ctx.moveTo(42, 22);
+                    ctx.lineTo(22, 42);
+                    ctx.stroke();
+                    break;
+
+                case 'ps5-btn-circle.png':
+                    ctx.beginPath();
+                    ctx.arc(32, 32, 26, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255,255,255,0.18)';
+                    ctx.fill();
+                    ctx.lineWidth = 3;
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.arc(32, 32, 12, 0, Math.PI * 2);
+                    ctx.lineWidth = 4;
+                    ctx.stroke();
+                    break;
+
+                case 'ps5-btn-options.png':
+                    ctx.fillStyle = '#ffffff';
+                    [18, 32, 46].forEach(x => {
+                        ctx.beginPath();
+                        ctx.arc(x, 32, 4.5, 0, Math.PI * 2);
+                        ctx.fill();
+                    });
+                    break;
+
+                case 'xbox-icon-gamerscore.png':
+                    ctx.beginPath();
+                    ctx.arc(32, 32, 26, 0, Math.PI * 2);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fill();
+                    ctx.fillStyle = '#101114';
+                    ctx.font = '900 34px Inter, sans-serif';
+                    ctx.fillText('G', 32, 34);
+                    break;
+
+                case 'xbox-icon-wifi.png':
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 4.5;
+                    ctx.lineCap = 'round';
+                    [24, 15].forEach(r => {
+                        ctx.beginPath();
+                        ctx.arc(32, 46, r, Math.PI * 1.22, Math.PI * 1.78);
+                        ctx.stroke();
+                    });
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(32, 48, 4.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    break;
+
+                case 'xbox-icon-battery.png':
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 4;
+                    ctx.strokeRect(8, 18, 42, 28);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(14, 24, 30, 16);
+                    ctx.fillRect(52, 25, 5, 14);
+                    break;
+
+                case 'xbox-icon-storage.png':
+                    ctx.strokeStyle = '#cfcfcf';
+                    ctx.lineWidth = 4;
+                    ctx.strokeRect(14, 10, 36, 44);
+                    ctx.fillStyle = '#107c10';
+                    ctx.fillRect(20, 42, 24, 5);
+                    break;
+
+                case 'xbox-btn-a.png':
+                    ctx.beginPath();
+                    ctx.arc(32, 32, 26, 0, Math.PI * 2);
+                    ctx.fillStyle = '#107c10';
+                    ctx.fill();
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = '800 32px Inter, sans-serif';
+                    ctx.fillText('A', 32, 34);
+                    break;
+
+                case 'xbox-btn-b.png':
+                    ctx.beginPath();
+                    ctx.arc(32, 32, 26, 0, Math.PI * 2);
+                    ctx.fillStyle = '#b91c1c';
+                    ctx.fill();
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = '800 32px Inter, sans-serif';
+                    ctx.fillText('B', 32, 34);
+                    break;
+
+                case 'xbox-btn-menu.png':
+                    ctx.beginPath();
+                    ctx.arc(32, 32, 26, 0, Math.PI * 2);
+                    ctx.fillStyle = '#2c2c2c';
+                    ctx.fill();
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 3.5;
+                    ctx.stroke();
+                    [23, 32, 41].forEach(y => {
+                        ctx.beginPath();
+                        ctx.moveTo(20, y);
+                        ctx.lineTo(44, y);
+                        ctx.stroke();
+                    });
+                    break;
+
+                case 'steam-icon-bell.png':
+                    ctx.fillStyle = '#c5c3c0';
+                    ctx.beginPath();
+                    ctx.arc(32, 28, 14, Math.PI, 0);
+                    ctx.lineTo(48, 44);
+                    ctx.lineTo(16, 44);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(32, 49, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                    break;
+
+                case 'steam-icon-inbox.png':
+                    ctx.strokeStyle = '#c5c3c0';
+                    ctx.lineWidth = 4;
+                    ctx.strokeRect(10, 16, 44, 32);
+                    ctx.beginPath();
+                    ctx.moveTo(10, 18);
+                    ctx.lineTo(32, 34);
+                    ctx.lineTo(54, 18);
+                    ctx.stroke();
+                    break;
+
+                case 'steam-icon-settings.png':
+                    ctx.strokeStyle = '#c5c3c0';
+                    ctx.lineWidth = 6;
+                    ctx.beginPath();
+                    ctx.arc(32, 32, 14, 0, Math.PI * 2);
+                    ctx.stroke();
+                    for (let i = 0; i < 8; i++) {
+                        const a = (i * Math.PI) / 4;
+                        ctx.beginPath();
+                        ctx.moveTo(32 + Math.cos(a) * 16, 32 + Math.sin(a) * 16);
+                        ctx.lineTo(32 + Math.cos(a) * 25, 32 + Math.sin(a) * 25);
+                        ctx.stroke();
+                    }
+                    break;
+
+                case 'steam-icon-network.png':
+                    ctx.strokeStyle = '#1a9fff';
+                    ctx.lineWidth = 5;
+                    ctx.lineCap = 'round';
+                    ctx.beginPath();
+                    ctx.moveTo(32, 12);
+                    ctx.lineTo(32, 44);
+                    ctx.moveTo(20, 32);
+                    ctx.lineTo(32, 45);
+                    ctx.lineTo(44, 32);
+                    ctx.moveTo(16, 52);
+                    ctx.lineTo(48, 52);
+                    ctx.stroke();
+                    break;
+
+                case 'steam-icon-disk.png':
+                    ctx.strokeStyle = '#75b022';
+                    ctx.lineWidth = 4.5;
+                    ctx.strokeRect(10, 18, 44, 28);
+                    ctx.fillStyle = '#75b022';
+                    ctx.fillRect(18, 29, 20, 6);
+                    break;
+
+                case 'steam-icon-pause.png':
+                    ctx.fillStyle = '#dcdedf';
+                    ctx.fillRect(18, 14, 9, 36);
+                    ctx.fillRect(37, 14, 9, 36);
+                    break;
+
+                case 'steam-icon-close.png':
+                case 'steam-win-close.png':
+                    ctx.strokeStyle = '#dcdedf';
+                    ctx.lineWidth = 5;
+                    ctx.lineCap = 'round';
+                    ctx.beginPath();
+                    ctx.moveTo(16, 16);
+                    ctx.lineTo(48, 48);
+                    ctx.moveTo(48, 16);
+                    ctx.lineTo(16, 48);
+                    ctx.stroke();
+                    break;
+
+                case 'steam-win-minimize.png':
+                    ctx.strokeStyle = '#8f98a0';
+                    ctx.lineWidth = 5;
+                    ctx.beginPath();
+                    ctx.moveTo(14, 44);
+                    ctx.lineTo(50, 44);
+                    ctx.stroke();
+                    break;
+
+                case 'steam-win-maximize.png':
+                    ctx.strokeStyle = '#8f98a0';
+                    ctx.lineWidth = 4.5;
+                    ctx.strokeRect(14, 14, 36, 36);
+                    break;
+
+                case 'steam-icon-friends.png':
+                    ctx.fillStyle = '#8f98a0';
+                    ctx.beginPath();
+                    ctx.arc(32, 22, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(32, 50, 16, Math.PI, 0);
+                    ctx.fill();
+                    break;
+
+                default:
+                    ctx.fillStyle = '#1a9fff';
+                    ctx.fillRect(12, 12, 40, 40);
+                    break;
+            }
+            return canvas.toDataURL('image/png');
+        };
+
+        window.applyPngPlaceholder = function (imgEl) {
+            if (!imgEl || imgEl.dataset.fallbackApplied === 'true') return;
+            imgEl.dataset.fallbackApplied = 'true';
+            const filename = imgEl.getAttribute('data-png-filename') || imgEl.getAttribute('src') || '';
+            imgEl.src = window.generatePngDataUrl(filename);
+        };
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            background-color: #07090e;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(100, 116, 139, 0.5);
+            border-radius: 9999px;
+        }
+
+        /* PS5 Authentic Focus Border & Ambient Golden Top-Right Glow */
+        @keyframes ps5FocusPulse {
+            0%, 100% {
+                box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.95), 0 0 18px rgba(255, 255, 255, 0.45);
+            }
+            50% {
+                box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7), 0 0 10px rgba(255, 255, 255, 0.25);
+            }
+        }
+        .ps5-focus-ring {
+            animation: ps5FocusPulse 2.6s ease-in-out infinite;
+        }
+        .ps5-tab-active {
+            background: rgba(255, 255, 255, 0.14);
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 14px rgba(255, 255, 255, 0.45);
+        }
+        @keyframes ps5BokehFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.65; }
+            50% { transform: translate(-18px, 12px) scale(1.06); opacity: 0.85; }
+        }
+        .ps5-bokeh {
+            animation: ps5BokehFloat 14s ease-in-out infinite;
+        }
+
+        /* Xbox Authentic Focus Border & Font */
+        .xbox-queue-focus {
+            border: 2px solid #ffffff;
+            box-shadow: inset 0 0 0 1px #107c10, 0 10px 28px rgba(0, 0, 0, 0.75);
+        }
+        .xbox-font {
+            font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
+        }
+
+        /* Toast Slide Animations */
+        @keyframes toastPs5In {
+            0% { transform: translateX(120%) scale(0.95); opacity: 0; }
+            100% { transform: translateX(0) scale(1); opacity: 1; }
+        }
+        @keyframes toastXboxIn {
+            0% { transform: translate(-50%, 120%) scale(0.9); opacity: 0; }
+            100% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+        }
+        @keyframes toastSteamIn {
+            0% { transform: translateY(120%); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        .toast-ps5 { animation: toastPs5In 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .toast-xbox { animation: toastXboxIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .toast-steam { animation: toastSteamIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between bg-[#07090e] text-slate-100 antialiased selection:bg-pink-500 selection:text-white">
+
+    <!-- ================= 1. INITIAL SPLASH SCREEN (SETUP & LAUNCH) ================= -->
+    <div id="splash-screen" class="min-h-screen flex flex-col justify-between relative overflow-hidden p-4 sm:p-8">
+        <!-- Ambient Vice City Background Glow -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden">
+            <div class="ps5-bokeh absolute -top-32 left-1/4 w-[550px] h-[550px] rounded-full bg-gradient-to-br from-pink-600/20 via-purple-600/15 to-transparent blur-3xl"></div>
+            <div class="ps5-bokeh absolute -bottom-32 right-1/4 w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-orange-500/15 via-cyan-500/15 to-transparent blur-3xl"></div>
+        </div>
+
+        <!-- Splash Top Branding Bar -->
+        <div class="relative z-10 max-w-3xl w-full mx-auto flex items-center justify-between py-2">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 via-purple-600 to-orange-500 p-[2px] shadow-lg shadow-pink-500/25 overflow-hidden">
+                    <img src="images/art-gtavi-logo.png" data-png-filename="images/art-gtavi-logo.png" alt="GTA VI Emblem" onerror="applyPngPlaceholder(this)" class="w-full h-full object-cover rounded-[10px]">
+                </div>
+                <div>
+                    <h1 class="font-display font-extrabold text-base sm:text-lg tracking-tight text-white">GTA VI Download Simulator</h1>
+                    <p class="text-xs text-slate-400">Because we can't play the game yet</p>
+                </div>
+            </div>
+            <div class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-mono text-slate-300">
+                <span class="w-2 h-2 rounded-full bg-pink-500"></span>
+                <span>v1.000.000</span>
+            </div>
+        </div>
+
+        <!-- Main Setup Card -->
+        <div class="relative z-10 max-w-3xl w-full mx-auto my-4 bg-[#0d1322]/90 backdrop-blur-2xl rounded-3xl border border-white/15 shadow-[0_25px_80px_rgba(0,0,0,0.75)] p-6 sm:p-9">
+            
+            <!-- Title & Package Size Box -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
+                <div>
+                    <span class="text-[11px] font-mono uppercase tracking-widest text-pink-400 font-semibold">Rockstar Games</span>
+                    <h2 class="font-display font-black text-2xl sm:text-3xl text-white tracking-tight mt-0.5">Grand Theft Auto VI</h2>
+                    <p class="text-xs text-slate-400 mt-1">Select a platform and enter your download speed to launch the interface.</p>
+                </div>
+                <div class="bg-slate-950/90 border border-pink-500/30 rounded-2xl px-4 py-3 text-left sm:text-right flex-shrink-0">
+                    <div class="text-[10px] font-mono uppercase tracking-widest text-slate-400">Download Size</div>
+                    <div id="splash-download-size" class="font-mono font-extrabold text-xl sm:text-2xl text-white">212.00 GB</div>
+                </div>
+            </div>
+
+            <!-- Step 1: Platform Selection -->
+            <div class="mt-6">
+                <div class="flex items-center justify-between mb-3">
+                    <label class="text-xs font-bold uppercase tracking-wider text-slate-300">1. Select Platform</label>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                    <!-- PlayStation 5 Option -->
+                    <button type="button" id="splash-plat-ps5" onclick="selectSplashPlatform('ps5')" class="flex flex-col items-start p-4 rounded-2xl border-2 transition-all text-left bg-[#0070d1]/20 border-[#00a2ff] shadow-[0_0_25px_rgba(0,112,209,0.35)]">
+                        <div class="w-10 h-10 rounded-xl bg-[#0070d1] text-white flex items-center justify-center mb-3 shadow overflow-hidden p-1.5">
+                            <img src="images/logo-ps5.png" data-png-filename="images/logo-ps5.png" alt="PlayStation 5 Logo" onerror="applyPngPlaceholder(this)" class="w-full h-full object-contain">
+                        </div>
+                        <div class="font-bold text-sm text-white">PlayStation 5</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">Downloads/Uploads</div>
+                    </button>
+
+                    <!-- Xbox Series X|S Option -->
+                    <button type="button" id="splash-plat-xbox" onclick="selectSplashPlatform('xbox')" class="flex flex-col items-start p-4 rounded-2xl border-2 transition-all text-left bg-slate-900/70 border-white/10 hover:border-white/25">
+                        <div class="w-10 h-10 rounded-xl bg-[#107C10] text-white flex items-center justify-center mb-3 shadow overflow-hidden p-1.5">
+                            <img src="images/logo-xbox.png" data-png-filename="images/logo-xbox.png" alt="Xbox Logo" onerror="applyPngPlaceholder(this)" class="w-full h-full object-contain">
+                        </div>
+                        <div class="font-bold text-sm text-white">Xbox Series X|S</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">Manage Queue</div>
+                    </button>
+
+                    <!-- Steam Option -->
+                    <button type="button" id="splash-plat-steam" onclick="selectSplashPlatform('steam')" class="flex flex-col items-start p-4 rounded-2xl border-2 transition-all text-left bg-slate-900/70 border-white/10 hover:border-white/25">
+                        <div class="w-10 h-10 rounded-xl bg-[#1a9fff] text-white flex items-center justify-center mb-3 shadow overflow-hidden p-1.5">
+                            <img src="images/logo-steam.png" data-png-filename="images/logo-steam.png" alt="Steam Logo" onerror="applyPngPlaceholder(this)" class="w-full h-full object-contain">
+                        </div>
+                        <div class="font-bold text-sm text-white">Steam</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">Steam Client</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2 & 3: Username / Gamertag & Download Speed -->
+            <div class="mt-6 pt-6 border-t border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <!-- Username / Gamertag Input -->
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-2.5">
+                        <label for="splash-username-input" class="text-xs font-bold uppercase tracking-wider text-slate-300">2. Username / Gamertag</label>
+                        <span class="text-[11px] font-mono text-pink-400">All Platforms</span>
+                    </div>
+                    <div class="flex items-center bg-slate-950 rounded-2xl border border-white/15 focus-within:border-pink-500 overflow-hidden px-4 py-2.5">
+                        <img src="images/art-user-avatar.png" data-png-filename="images/art-user-avatar.png" alt="User Avatar" onerror="applyPngPlaceholder(this)" class="user-avatar-img w-5 h-5 rounded-full mr-2.5 flex-shrink-0 object-cover">
+                        <input type="text" id="splash-username-input" value="ViceCity_86" maxlength="24" oninput="handleUsernameInput(this.value)" class="w-full bg-transparent text-base sm:text-lg font-mono font-bold text-white focus:outline-none" placeholder="ViceCity_86">
+                    </div>
+                </div>
+
+                <!-- Download Speed Input -->
+                <div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+                        <label for="splash-speed-input" class="text-xs font-bold uppercase tracking-wider text-slate-300">3. Download Speed</label>
+                        <span id="splash-converted-hint" class="text-xs font-mono text-cyan-300">= 50.0 MB/s</span>
+                    </div>
+                    <div class="flex items-center bg-slate-950 rounded-2xl border border-white/15 focus-within:border-pink-500 overflow-hidden px-4 py-2">
+                        <input type="number" id="splash-speed-input" value="400" min="1" max="200000" step="any" oninput="handleSpeedNumberInput(this.value)" class="w-full bg-transparent text-base sm:text-lg font-mono font-bold text-white focus:outline-none" placeholder="Enter speed...">
+                        <button type="button" id="splash-unit-btn" onclick="toggleSpeedUnit()" class="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-mono font-bold text-cyan-300 transition border border-white/10">
+                            Mbps
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Start Action Button ("Download Now") -->
+            <div class="mt-7">
+                <button type="button" onclick="startDownloadNow()" class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-pink-600 via-purple-600 to-orange-500 hover:from-pink-500 hover:via-purple-500 hover:to-orange-400 text-white font-display font-black text-base sm:text-lg tracking-wide shadow-[0_15px_35px_rgba(255,42,133,0.35)] transition transform active:scale-[0.99] flex items-center justify-center gap-2.5">
+                    <img src="images/ps5-icon-downloads-header.png" data-png-filename="images/ps5-icon-downloads-header.png" alt="Download Icon" onerror="applyPngPlaceholder(this)" class="w-5 h-5 object-contain">
+                    <span>Download Now</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="relative z-10 text-center text-xs text-slate-500 pb-1">
+            Playstation, Xbox, Steam, Grand Theft Auto trademarks are owned by Sony, Microsoft, Valve, and Rockstar, respectively. <br/>
+This is a parody. Please don't hunt me down. Idea and lead by <a href=https://twitch.tv/norph_star>Norph Star</a>. 100% slop and vibecoded with AI. You are not actually downloading anything,
+        </div>
+    </div>
+
+
+    <!-- ================= 2. SUBTLE FLOATING CONTROL PILL (BOTTOM-LEFT OVERLAY) ================= -->
+    <div id="floating-sim-pill" class="hidden fixed bottom-3 left-3 z-50 flex items-center gap-1.5 bg-black/75 hover:bg-black/95 backdrop-blur-md border border-white/15 rounded-full px-2.5 py-1.5 opacity-25 hover:opacity-100 focus-within:opacity-100 transition-all duration-200 shadow-2xl">
+        <button onclick="returnToSplash()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-[11px] font-medium text-white transition" title="Return to Setup Screen">
+            <img src="images/steam-icon-settings.png" data-png-filename="images/steam-icon-settings.png" alt="Setup" onerror="applyPngPlaceholder(this)" class="w-3.5 h-3.5 object-contain">
+            <span>Setup</span>
+        </button>
+        <div class="flex items-center bg-white/5 rounded-full border border-white/10 px-2 py-0.5">
+            <input type="number" id="speed-input" value="500" min="1" max="200000" step="any" oninput="handleSpeedNumberInput(this.value)" class="w-14 bg-transparent text-[11px] font-mono font-bold text-white focus:outline-none" title="Live Network Speed">
+            <button id="unit-toggle-btn" onclick="toggleSpeedUnit()" class="text-[10px] font-mono font-bold text-cyan-300 hover:text-white pl-1">
+                Mbps
+            </button>
+        </div>
+        <button id="sound-btn" onclick="toggleSound()" class="px-2 py-0.5 rounded-full bg-white/5 hover:bg-white/15 text-[10px] font-mono text-cyan-300 transition" title="Toggle Chime">
+            <span id="sound-label-on">SFX ON</span>
+            <span id="sound-label-off" class="hidden text-slate-500">SFX OFF</span>
+        </button>
+    </div>
+
+
+    <!-- ================= 3. FULLSCREEN 1:1 NATIVE PLATFORM REPLICAS ================= -->
+    <main id="sim-main" class="hidden w-screen h-screen overflow-hidden relative select-none">
+
+        <!-- ======================================================================= -->
+        <!-- 1. PLAYSTATION 5 (1:1 SYSTEM SOFTWARE `DOWNLOADS/UPLOADS` SCREEN)        -->
+        <!-- ======================================================================= -->
+        <section id="view-ps5" class="platform-view w-full h-full relative overflow-hidden flex flex-col justify-between bg-[#12151a] text-[#e8eaed]">
+            
+            <!-- Authentic PS5 Dark Slate-to-Warm-Amber Top-Right Radial Background & Bokeh -->
+            <div class="absolute inset-0 pointer-events-none overflow-hidden">
+                <div class="absolute inset-0" style="background: radial-gradient(circle at 86% 12%, #3a2d1e 0%, #1d2129 42%, #11141a 100%);"></div>
+                <div class="ps5-bokeh absolute -top-24 right-12 w-[540px] h-[340px] rounded-full bg-[#d69e4e]/15 blur-[95px]"></div>
+                <div class="ps5-bokeh absolute top-14 right-1/3 w-[220px] h-[220px] rounded-full bg-amber-200/10 blur-[65px]"></div>
+                <div class="absolute top-[88px] inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+            </div>
+
+            <!-- PS5 System Header -->
+            <div class="relative z-10 flex items-center justify-between px-8 sm:px-16 pt-8 pb-4">
+                <div class="flex items-center gap-4">
+                    <!-- Official-style PS5 Downloads/Uploads Icon (PNG) -->
+                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/15 shadow-inner p-2">
+                        <img src="images/ps5-icon-downloads-header.png" data-png-filename="images/ps5-icon-downloads-header.png" alt="Downloads/Uploads Icon" onerror="applyPngPlaceholder(this)" class="w-full h-full object-contain">
+                    </div>
+                    <h2 class="text-[24px] sm:text-[26px] font-light tracking-wide text-[#e8eaed]">Downloads/Uploads</h2>
+                </div>
+
+                <!-- Top-Right PS5 PSN Avatar + Online Dot + Username + System Clock -->
+                <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-3">
+                        <div class="relative">
+                            <img id="ps5-avatar-img" src="images/art-user-avatar.png" data-png-filename="images/art-user-avatar.png" alt="PSN Profile Avatar" onerror="applyPngPlaceholder(this)" class="user-avatar-img w-9 h-9 rounded-full border border-white/30 object-cover shadow">
+                            <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#22c55e] border-2 border-[#12151a]"></span>
+                        </div>
+                        <span id="ps5-username" class="text-[17px] font-normal text-[#e8eaed] tracking-wide">ViceCity_86</span>
+                    </div>
+                    <span id="ps5-clock" class="text-[20px] sm:text-[22px] font-light tracking-wider text-[#d0d4dc]">4:28 PM</span>
+                </div>
+            </div>
+
+            <!-- PS5 Two-Column Layout -->
+            <div class="relative z-10 flex-1 flex flex-col lg:flex-row gap-8 lg:gap-12 px-8 sm:px-16 pt-6 pb-8 overflow-y-auto lg:overflow-hidden">
+                
+                <!-- Left Column (310px fixed width on desktop) -->
+                <div class="w-full lg:w-[310px] flex-shrink-0 flex flex-col gap-2.5 pt-2">
+                    <!-- Tab 1: Downloads (Active with White PS5 Focus Border & Outer Glow) -->
+                    <div class="h-[56px] rounded-[10px] px-5 flex items-center justify-between ps5-tab-active text-white">
+                        <span class="text-[17px] font-normal tracking-wide">Downloads</span>
+                        <span class="text-[17px] font-normal text-white">1</span>
+                    </div>
+                    <!-- Tab 2: Uploads (Inactive muted state) -->
+                    <div class="h-[56px] rounded-[10px] px-5 flex items-center justify-between text-white/55 hover:bg-white/5 transition">
+                        <span class="text-[17px] font-normal tracking-wide">Uploads</span>
+                        <span class="text-[17px] font-normal">0</span>
+                    </div>
+                </div>
+
+                <!-- Right Main Content Pane -->
+                <div class="flex-1 flex flex-col pt-1">
+                    <!-- Section Header Above List -->
+                    <div class="text-[16px] text-white/60 font-normal mb-3.5 pl-1">Downloads</div>
+
+                    <!-- Active PS5 Download Item Row -->
+                    <div class="w-full bg-white/[0.06] backdrop-blur-md rounded-[12px] px-5 sm:px-6 py-[18px] ps5-focus-ring flex items-center gap-5 sm:gap-6">
+                        
+                        <!-- Left: Square GTA VI Cover Art Tile (76px x 76px PNG) -->
+                        <div class="w-[76px] h-[76px] rounded-[6px] overflow-hidden flex-shrink-0 relative shadow-lg border border-white/15 bg-[#12071f]">
+                            <img src="images/art-gtavi-cover-square.png" data-png-filename="images/art-gtavi-cover-square.png" alt="Grand Theft Auto VI Cover" onerror="applyPngPlaceholder(this)" class="w-full h-full object-cover">
+                        </div>
+
+                        <!-- Center-Right (flex-1): Title, 4px Progress Bar, Bottom Split Metadata Line -->
+                        <div class="flex-1 min-w-0">
+                            <!-- Top Line: Game Title -->
+                            <div class="text-[19px] sm:text-[20px] font-normal text-white truncate tracking-tight">
+                                Grand Theft Auto VI
+                            </div>
+
+                            <!-- Middle Line: Full-Width 4px Horizontal Progress Bar -->
+                            <div class="w-full h-[4px] bg-white/[0.22] rounded-full overflow-hidden my-2.5">
+                                <div id="ps5-progress-fill" class="h-full bg-white rounded-full transition-all duration-100" style="width: 0%"></div>
+                            </div>
+
+                            <!-- Bottom Metadata Line (Split Left & Right) -->
+                            <div class="flex flex-wrap items-center justify-between gap-2 text-[14px] text-[#c7ccd4]">
+                                <!-- Left side: PS5 Tag PNG + Version / Status Text -->
+                                <div class="flex items-center gap-2.5">
+                                    <img src="images/ps5-badge-version.png" data-png-filename="images/ps5-badge-version.png" alt="PS5 Badge" onerror="applyPngPlaceholder(this)" class="h-[16px] w-auto object-contain rounded-[2px]">
+                                    <span id="ps5-status-line" class="text-[#d0d4dc] font-normal">Version 1.000.000 • Calculating...</span>
+                                </div>
+
+                                <!-- Right side: GB Counter + Percentage + Time Remaining -->
+                                <div class="flex items-center gap-3 text-[#d0d4dc] font-normal">
+                                    <span id="ps5-gb-counter">0.00 GB/212.00 GB</span>
+                                    <span id="ps5-percent-text">0%</span>
+                                    <span id="ps5-time-left">Calculating...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Far Right of Row: Pause/Resume & Cancel Icon Buttons (PNG) -->
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            <button onclick="togglePlayPause()" id="ps5-row-pause-btn" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition p-2.5" title="Pause / Resume">
+                                <img src="images/ps5-btn-options.png" data-png-filename="images/ps5-btn-options.png" alt="Options" onerror="applyPngPlaceholder(this)" class="w-full h-full object-contain">
+                            </button>
+                            <button onclick="returnToSplash()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-rose-500/40 flex items-center justify-center text-white transition p-2.5" title="Cancel and Delete">
+                                <img src="images/ps5-btn-circle.png" data-png-filename="images/ps5-btn-circle.png" alt="Cancel" onerror="applyPngPlaceholder(this)" class="w-full h-full object-contain">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom-Right PS5 Controller Prompts (PNG Icons) -->
+            <div class="relative z-10 px-8 sm:px-16 pb-7 pt-2 flex items-center justify-end gap-7 text-[15px] text-[#d0d4dc]">
+                <button onclick="togglePlayPause()" class="flex items-center gap-2.5 hover:text-white transition">
+                    <img src="images/ps5-btn-cross.png" data-png-filename="images/ps5-btn-cross.png" alt="Cross Button" onerror="applyPngPlaceholder(this)" class="w-6 h-6 object-contain">
+                    <span class="font-light">Options</span>
+                </button>
+                <button onclick="returnToSplash()" class="flex items-center gap-2.5 hover:text-white transition">
+                    <img src="images/ps5-btn-circle.png" data-png-filename="images/ps5-btn-circle.png" alt="Circle Button" onerror="applyPngPlaceholder(this)" class="w-6 h-6 object-contain">
+                    <span class="font-light">Back</span>
+                </button>
+            </div>
+        </section>
+
+
+        <!-- ======================================================================= -->
+        <!-- 2. XBOX SERIES X|S (1:1 `MY GAMES & APPS > MANAGE > QUEUE` SCREEN)      -->
+        <!-- ======================================================================= -->
+        <section id="view-xbox" class="platform-view hidden w-full h-full relative overflow-hidden flex bg-[#101114] xbox-font text-white">
+            
+            <!-- Left Sidebar (270px width, #151515, border-right 1px solid #222) -->
+            <aside class="w-[230px] sm:w-[270px] h-full bg-[#151515] border-r border-[#222222] flex flex-col justify-between p-6 flex-shrink-0">
+                <div>
+                    <!-- Top Header Inside Sidebar Area -->
+                    <div class="mb-6">
+                        <div class="text-[14px] text-[#9a9a9a] font-normal leading-tight">My games & apps</div>
+                        <div class="text-[32px] sm:text-[34px] font-bold text-white leading-tight tracking-tight mt-0.5">Queue</div>
+                    </div>
+
+                    <!-- Vertical Menu List -->
+                    <nav class="flex flex-col gap-1 text-[15px]">
+                        <div class="px-3.5 py-2 text-[#a0a0a0] hover:bg-white/5 rounded-[2px]">Games</div>
+                        <div class="px-3.5 py-2 text-[#a0a0a0] hover:bg-white/5 rounded-[2px]">Apps</div>
+                        <div class="px-3.5 py-2 text-[#a0a0a0] hover:bg-white/5 rounded-[2px]">Groups</div>
+                        <div class="px-3.5 py-2 text-[#a0a0a0] hover:bg-white/5 rounded-[2px]">Full library</div>
+                        <div class="px-3.5 py-2 text-white font-semibold mt-2">Manage</div>
+                        
+                        <!-- Active Queue (1) Item with 4px Vertical Xbox Green Bar -->
+                        <div class="relative flex items-center justify-between px-3.5 py-2.5 bg-[#262626] text-white font-semibold">
+                            <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-[#107c10]"></div>
+                            <span class="pl-1.5">Queue (1)</span>
+                        </div>
+                        <div class="px-3.5 py-2 text-[#a0a0a0] pl-5">Updates (0)</div>
+                    </nav>
+                </div>
+
+                <!-- Bottom of Sidebar: Storage Meter Widget with PNG Icon -->
+                <div class="pt-4 border-t border-[#262626] flex items-center gap-3">
+                    <img src="images/xbox-icon-storage.png" data-png-filename="images/xbox-icon-storage.png" alt="Internal Storage" onerror="applyPngPlaceholder(this)" class="w-8 h-8 object-contain flex-shrink-0">
+                    <div class="flex-1 min-w-0">
+                        <div class="text-[13px] font-semibold text-white mb-1">Internal storage</div>
+                        <div class="w-full h-[5px] bg-[#2c2c2c] overflow-hidden mb-1">
+                            <div class="h-full bg-[#107c10] w-[64.2%]"></div>
+                        </div>
+                        <div class="text-[11px] text-[#9a9a9a] truncate">64.2% full • 286.4 GB free</div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Queue Content Area (Right of Sidebar) -->
+            <div class="flex-1 h-full flex flex-col justify-between px-7 sm:px-12 py-6 overflow-y-auto">
+                
+                <div>
+                    <!-- Top-Right System Cluster (PNG Icons) -->
+                    <div class="flex items-center justify-end gap-4 text-[13px] text-[#d0d0d0] mb-6">
+                        <div class="flex items-center gap-2.5 bg-[#1c1c1c] px-3 py-1 rounded-full border border-white/10">
+                            <img id="xbox-avatar-img" src="images/art-user-avatar.png" data-png-filename="images/art-user-avatar.png" alt="Xbox Gamertag Avatar" onerror="applyPngPlaceholder(this)" class="user-avatar-img w-6 h-6 rounded-full object-cover">
+                            <span id="xbox-username" class="font-semibold text-white">ViceCity_86</span>
+                            <span class="inline-flex items-center gap-1 text-[#cfcfcf]">
+                                <img src="images/xbox-icon-gamerscore.png" data-png-filename="images/xbox-icon-gamerscore.png" alt="Gamerscore" onerror="applyPngPlaceholder(this)" class="w-4 h-4 object-contain">
+                                <span>24,850</span>
+                            </span>
+                        </div>
+                        <!-- Wi-Fi / Network PNG Icon -->
+                        <img src="images/xbox-icon-wifi.png" data-png-filename="images/xbox-icon-wifi.png" alt="Wi-Fi Signal" onerror="applyPngPlaceholder(this)" class="w-5 h-5 object-contain">
+                        <!-- Controller Battery PNG Icon -->
+                        <img src="images/xbox-icon-battery.png" data-png-filename="images/xbox-icon-battery.png" alt="Controller Battery" onerror="applyPngPlaceholder(this)" class="w-6 h-4 object-contain">
+                        <span id="xbox-clock" class="text-[15px] font-semibold text-white">4:28 PM</span>
+                    </div>
+
+                    <!-- Top Action & Network Usage Strip -->
+                    <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-6 pb-7 border-b border-[#222222]">
+                        <!-- Left side: Two Authentic Xbox Dark Matte Rectangular Buttons -->
+                        <div class="flex items-center gap-2.5">
+                            <button onclick="togglePlayPause()" id="xbox-pause-all-btn" class="h-[40px] px-5 bg-[#252525] hover:bg-[#303030] border border-transparent focus:border-white text-[14px] font-semibold text-white transition">
+                                Pause all
+                            </button>
+                            <button onclick="returnToSplash()" class="h-[40px] px-5 bg-[#252525] hover:bg-[#303030] border border-transparent focus:border-white text-[14px] font-semibold text-white transition">
+                                Cancel all
+                            </button>
+                        </div>
+
+                        <!-- Right side: Authentic Xbox Current Network Usage Telemetry Module -->
+                        <div class="flex items-center gap-4 self-end xl:self-auto">
+                            <div class="text-right">
+                                <div class="text-[12px] text-[#a0a0a0]">Current network usage</div>
+                                <div id="xbox-top-speed" class="text-[22px] font-bold text-white leading-tight mt-0.5">500.00 Mbps</div>
+                            </div>
+                            <div class="flex flex-col">
+                                <div class="w-[220px] h-[56px] bg-[#181818] border border-[#262626] p-1">
+                                    <canvas id="xbox-chart-canvas" class="w-full h-full block"></canvas>
+                                </div>
+                                <div class="flex items-center justify-between text-[10px] text-[#888888] mt-0.5">
+                                    <span>45m ago</span>
+                                    <span>Now</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section Title: Installing now -->
+                    <div class="mt-6">
+                        <div class="text-[16px] font-semibold text-[#d0d0d0] mb-3">Installing now</div>
+
+                        <!-- Active Xbox Queue Card (height: 92px, #1f1f1f, crisp 2px solid #ffffff outer border) -->
+                        <div class="w-full h-[92px] bg-[#1f1f1f] xbox-queue-focus flex items-stretch overflow-hidden">
+                            
+                            <!-- Flush-Left Square Game Tile (88px x 88px PNG) with Official X|S Badge PNG -->
+                            <div class="w-[88px] h-[88px] flex-shrink-0 relative bg-[#12071f]">
+                                <img src="images/art-gtavi-cover-square.png" data-png-filename="images/art-gtavi-cover-square.png" alt="Grand Theft Auto VI Tile" onerror="applyPngPlaceholder(this)" class="w-full h-full object-cover">
+                                <img src="images/xbox-badge-xs.png" data-png-filename="images/xbox-badge-xs.png" alt="Optimized for Xbox Series X|S" onerror="applyPngPlaceholder(this)" class="absolute bottom-1 left-1 h-4 w-auto object-contain">
+                            </div>
+
+                            <!-- Main Body of the Card -->
+                            <div class="flex-1 flex flex-col justify-between min-w-0">
+                                <!-- Top & Middle Rows Padded -->
+                                <div class="flex-1 px-4 pt-2.5 pb-1.5 flex flex-col justify-between">
+                                    <!-- Top Row: Title on Left, Menu Icon PNG on Far Right -->
+                                    <div class="flex items-center justify-between gap-2">
+                                        <span class="text-[18px] sm:text-[19px] font-semibold text-white truncate leading-tight">Grand Theft Auto VI</span>
+                                        <button onclick="togglePlayPause()" class="opacity-80 hover:opacity-100 transition p-0.5" title="Queue Options">
+                                            <img src="images/xbox-btn-menu.png" data-png-filename="images/xbox-btn-menu.png" alt="Menu Options" onerror="applyPngPlaceholder(this)" class="w-5 h-5 object-contain">
+                                        </button>
+                                    </div>
+
+                                    <!-- Middle Row (Right Above Bottom Progress Bar) -->
+                                    <div class="flex flex-wrap items-center justify-between gap-2 text-[13px] text-[#cfcfcf]">
+                                        <span id="xbox-status-text" class="text-white font-normal">Installing...</span>
+
+                                        <!-- Exact Xbox Queue Telemetry Cluster -->
+                                        <div class="flex items-center gap-4 sm:gap-6 font-normal text-[#d8d8d8]">
+                                            <span id="xbox-size-cluster">0.00 GB of 212.00 GB</span>
+                                            <span id="xbox-percent-text">0.0%</span>
+                                            <span id="xbox-eta-clock">00:58:12</span>
+                                            <span id="xbox-speed-inline" class="text-white font-semibold">500.00 Mbps</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Bottom Edge of Card: 6px Height Progress Bar Track (#333333) with Xbox Green Fill -->
+                                <div class="w-full h-[6px] bg-[#333333] overflow-hidden">
+                                    <div id="xbox-progress-fill" class="h-full bg-[#107c10] transition-all duration-100" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom-Right Xbox Controller Legend (PNG Icons) -->
+                <div class="pt-4 flex items-center justify-end gap-6 text-[13px] text-[#cfcfcf]">
+                    <button onclick="togglePlayPause()" class="flex items-center gap-2 hover:text-white transition">
+                        <img src="images/xbox-btn-a.png" data-png-filename="images/xbox-btn-a.png" alt="Xbox A Button" onerror="applyPngPlaceholder(this)" class="w-5 h-5 object-contain">
+                        <span>Pause/Resume</span>
+                    </button>
+                    <button onclick="returnToSplash()" class="flex items-center gap-2 hover:text-white transition">
+                        <img src="images/xbox-btn-menu.png" data-png-filename="images/xbox-btn-menu.png" alt="Xbox Menu Button" onerror="applyPngPlaceholder(this)" class="w-5 h-5 object-contain">
+                        <span>Cancel</span>
+                    </button>
+                    <button onclick="returnToSplash()" class="flex items-center gap-2 hover:text-white transition">
+                        <img src="images/xbox-btn-b.png" data-png-filename="images/xbox-btn-b.png" alt="Xbox B Button" onerror="applyPngPlaceholder(this)" class="w-5 h-5 object-contain">
+                        <span>Back</span>
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ======================================================================= -->
+        <!-- 3. STEAM (1:1 MODERN STEAM DESKTOP CLIENT `DOWNLOADS` TAB)              -->
+        <!-- ======================================================================= -->
+        <section id="view-steam" class="platform-view hidden w-full h-full relative overflow-hidden flex flex-col justify-between bg-[#101216] text-white font-sans">
+            
+            <!-- Top Steam Client Frame (#171a21) -->
+            <div class="bg-[#171a21] border-b border-black/60 flex-shrink-0">
+                <!-- Row 1: Top System Menu Bar -->
+                <div class="px-3.5 pt-2 pb-1 flex items-center justify-between text-[12px] text-[#8f98a0]">
+                    <div class="flex items-center gap-4">
+                        <span class="flex items-center gap-1.5 text-[#c5c3c0] font-medium">
+                            <img src="images/logo-steam.png" data-png-filename="images/logo-steam.png" alt="Steam" onerror="applyPngPlaceholder(this)" class="w-4 h-4 object-contain">
+                            <span>Steam</span>
+                        </span>
+                        <span class="hover:text-white cursor-pointer">View</span>
+                        <span class="hover:text-white cursor-pointer">Friends</span>
+                        <span class="hover:text-white cursor-pointer">Games</span>
+                        <span class="hover:text-white cursor-pointer">Help</span>
+                    </div>
+
+                    <!-- Right Window Controls & Account Utility Bar (PNG Icons) -->
+                    <div class="flex items-center gap-3">
+                        <div class="hidden sm:flex items-center gap-1.5">
+                            <!-- Notification Bell PNG -->
+                            <span class="px-2 py-1 bg-[#21262e] hover:bg-[#2b313c] text-[#c5c3c0] text-[11px] rounded-[2px] flex items-center justify-center">
+                                <img src="images/steam-icon-bell.png" data-png-filename="images/steam-icon-bell.png" alt="Notifications" onerror="applyPngPlaceholder(this)" class="w-3.5 h-3.5 object-contain">
+                            </span>
+                            <!-- Inbox / Mail PNG -->
+                            <span class="px-2 py-1 bg-[#21262e] hover:bg-[#2b313c] text-[#c5c3c0] text-[11px] rounded-[2px] flex items-center justify-center">
+                                <img src="images/steam-icon-inbox.png" data-png-filename="images/steam-icon-inbox.png" alt="Inbox" onerror="applyPngPlaceholder(this)" class="w-3.5 h-3.5 object-contain">
+                            </span>
+                            <!-- Avatar Frame PNG + Dynamic Username + Wallet Balance -->
+                            <div class="flex items-center gap-2 bg-[#21262e] px-2 py-0.5 rounded-[2px] text-[11px] font-medium">
+                                <img id="steam-avatar-img" src="images/art-user-avatar.png" data-png-filename="images/art-user-avatar.png" alt="Steam User Avatar" onerror="applyPngPlaceholder(this)" class="user-avatar-img w-5 h-5 rounded-[2px] border border-[#57cbde] object-cover">
+                                <span id="steam-top-username" class="text-[#57cbde] font-semibold">ViceCity_86</span>
+                                <span class="text-[#8f98a0]">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2.5 text-[#8f98a0] pl-2">
+                            <button class="opacity-75 hover:opacity-100 p-0.5" title="Minimize">
+                                <img src="images/steam-win-minimize.png" data-png-filename="images/steam-win-minimize.png" alt="Minimize" onerror="applyPngPlaceholder(this)" class="w-3.5 h-3.5 object-contain">
+                            </button>
+                            <button class="opacity-75 hover:opacity-100 p-0.5" title="Maximize">
+                                <img src="images/steam-win-maximize.png" data-png-filename="images/steam-win-maximize.png" alt="Maximize" onerror="applyPngPlaceholder(this)" class="w-3.5 h-3.5 object-contain">
+                            </button>
+                            <button onclick="returnToSplash()" class="opacity-80 hover:opacity-100 p-0.5" title="Close to Setup">
+                                <img src="images/steam-win-close.png" data-png-filename="images/steam-win-close.png" alt="Close" onerror="applyPngPlaceholder(this)" class="w-3.5 h-3.5 object-contain">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Main Navigation Header -->
+                <div class="px-5 py-2 flex items-center gap-6">
+                    <div class="flex items-center gap-2 text-[#8f98a0]">
+                        <button onclick="returnToSplash()" class="hover:text-white px-1.5 py-0.5 text-sm font-bold" title="Back to Setup">&larr;</button>
+                        <button class="text-white/25 px-1.5 py-0.5 text-sm font-bold cursor-default">&rarr;</button>
+                    </div>
+                    <div class="flex items-center gap-7 text-[18px] sm:text-[20px] font-bold tracking-wider uppercase">
+                        <span class="text-[#dcdedf] hover:text-white cursor-pointer">STORE</span>
+                        <span class="text-[#1a9fff] border-b-[3px] border-[#1a9fff] pb-0.5">LIBRARY</span>
+                        <span class="text-[#dcdedf] hover:text-white cursor-pointer">COMMUNITY</span>
+                        <span id="steam-nav-username" class="text-[#dcdedf] hover:text-white cursor-pointer">VICECITY_86</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Downloads Hero & Live Telemetry Header (height: 195px, #14171e) -->
+            <div class="relative h-auto lg:h-[195px] bg-[#14171e] border-b border-white/5 overflow-hidden flex-shrink-0 flex items-center">
+                <!-- Wide Darkened Blurred GTA VI Vice City Banner PNG Fading Smoothly into #14171e -->
+                <div class="absolute inset-y-0 left-0 w-full lg:w-[52%] pointer-events-none overflow-hidden">
+                    <img src="images/art-gtavi-steam-hero.png" data-png-filename="images/art-gtavi-steam-hero.png" alt="GTA VI Hero Banner" onerror="applyPngPlaceholder(this)" class="w-full h-full object-cover opacity-45 blur-md scale-105">
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-[#14171e]/75 to-[#14171e]"></div>
+                </div>
+
+                <div class="relative z-10 max-w-7xl w-full mx-auto px-6 py-4 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                    
+                    <!-- Left Side of Header: Crisp GTA VI Horizontal Artwork/Logo Treatment (PNG) -->
+                    <div class="flex items-center gap-5">
+                        <div class="w-[150px] h-[84px] rounded-[3px] overflow-hidden shadow-2xl border border-white/15 flex-shrink-0 bg-[#12071f]">
+                            <img src="images/art-gtavi-steam-hero.png" data-png-filename="images/art-gtavi-steam-hero.png" alt="Grand Theft Auto VI Artwork" onerror="applyPngPlaceholder(this)" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <div class="text-[22px] sm:text-[26px] font-bold text-white tracking-tight leading-tight">Grand Theft Auto VI</div>
+                            <div id="steam-hero-sub" class="text-[12px] text-[#1a9fff] font-semibold uppercase tracking-wider mt-1">DOWNLOADING</div>
+                        </div>
+                    </div>
+
+                    <!-- Center-Right of Header: Exact Steam Downloads Graph + 4-Metric Grid + Action Buttons -->
+                    <div class="flex flex-wrap sm:flex-nowrap items-center gap-6 w-full lg:w-auto justify-between lg:justify-end">
+                        
+                        <!-- Live Canvas Graph (340px x 96px) -->
+                        <div class="flex flex-col">
+                            <div class="flex items-center gap-4 text-[11px] font-semibold text-[#8f98a0] mb-1.5">
+                                <span class="flex items-center gap-1.5">
+                                    <span class="w-2.5 h-2.5 bg-[#1a9fff] inline-block rounded-[1px]"></span>
+                                    <span>NETWORK</span>
+                                </span>
+                                <span class="flex items-center gap-1.5">
+                                    <span class="w-3 h-[2px] bg-[#75b022] inline-block"></span>
+                                    <span>DISK</span>
+                                </span>
+                            </div>
+                            <div class="w-[290px] sm:w-[340px] h-[96px] bg-[#0e1116]/90 border border-white/5 rounded-[2px] p-1">
+                                <canvas id="steam-chart-canvas" class="w-full h-full block"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- 2x2 Metric Grid in Authentic Steam Typography -->
+                        <div class="grid grid-cols-2 gap-x-7 gap-y-3 min-w-[230px]">
+                            <div>
+                                <div class="text-[10px] font-bold uppercase tracking-wider text-[#8f98a0]">CURRENT</div>
+                                <div id="steam-current-speed" class="text-[16px] font-bold text-white leading-tight">500.0 Mbps</div>
+                            </div>
+                            <div>
+                                <div class="text-[10px] font-bold uppercase tracking-wider text-[#8f98a0]">PEAK</div>
+                                <div id="steam-peak-speed" class="text-[16px] font-bold text-white leading-tight">500.0 Mbps</div>
+                            </div>
+                            <div>
+                                <div class="text-[10px] font-bold uppercase tracking-wider text-[#8f98a0]">TOTAL</div>
+                                <div id="steam-total-dl" class="text-[16px] font-bold text-white leading-tight">0.00 GB</div>
+                            </div>
+                            <div>
+                                <div class="text-[10px] font-bold uppercase tracking-wider text-[#8f98a0]">DISK USAGE</div>
+                                <div id="steam-disk-usage" class="text-[16px] font-bold text-[#75b022] leading-tight">500.0 Mbps</div>
+                            </div>
+                        </div>
+
+                        <!-- Far Right of Header: Gear Icon PNG & Solid Blue/Slate Pause/Resume Button -->
+                        <div class="flex items-center gap-2 self-end sm:self-center">
+                            <button onclick="returnToSplash()" class="w-9 h-9 rounded-[3px] bg-[#232830] hover:bg-[#2f3640] text-[#8f98a0] hover:text-white flex items-center justify-center transition p-2" title="Download Settings / Setup">
+                                <img src="images/steam-icon-settings.png" data-png-filename="images/steam-icon-settings.png" alt="Download Settings" onerror="applyPngPlaceholder(this)" class="w-full h-full object-contain">
+                            </button>
+                            <button onclick="togglePlayPause()" id="steam-hero-pause-btn" class="h-9 px-5 rounded-[3px] bg-[#1a9fff] hover:bg-[#33abff] text-white text-[13px] font-semibold transition shadow">
+                                Pause
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Downloads Queue Body (#101216 background) -->
+            <div class="flex-1 bg-[#101216] px-6 py-6 overflow-y-auto">
+                <div class="max-w-7xl mx-auto">
+                    <!-- Section Divider -->
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-[12px] font-bold uppercase tracking-wider text-[#1a9fff]">Up Next / In Queue</span>
+                        <span class="text-[12px] text-[#8f98a0]">(1)</span>
+                        <div class="flex-1 h-px bg-white/5 ml-2"></div>
+                    </div>
+
+                    <!-- Active Steam Download Row (#1e232c, border-radius: 4px, padding: 14px 20px) -->
+                    <div class="bg-[#1e232c] hover:bg-[#232934] rounded-[4px] px-5 py-[14px] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 transition">
+                        
+                        <!-- Left + Left-Center: Horizontal Capsule Artwork (168px x 64px PNG) + Title & Status -->
+                        <div class="flex items-center gap-4">
+                            <div class="w-[168px] h-[64px] rounded-[2px] overflow-hidden flex-shrink-0 border border-white/10 bg-[#12071f]">
+                                <img src="images/art-gtavi-steam-capsule.png" data-png-filename="images/art-gtavi-steam-capsule.png" alt="Grand Theft Auto VI Capsule" onerror="applyPngPlaceholder(this)" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <div class="text-[16px] font-bold text-white">Grand Theft Auto VI</div>
+                                <div class="flex items-center gap-2 text-[12px] mt-1">
+                                    <img src="images/steam-icon-network.png" data-png-filename="images/steam-icon-network.png" alt="Downloading" onerror="applyPngPlaceholder(this)" class="w-3.5 h-3.5 object-contain">
+                                    <span id="steam-stage-badge" class="text-[#1a9fff] font-bold uppercase tracking-wider">DOWNLOADING</span>
+                                    <span id="steam-percent-text" class="text-[#1a9fff] font-bold">0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right-Center (Progress & Metrics Column, width: 360px) + Far Right Square Buttons -->
+                        <div class="w-full lg:w-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-5">
+                            <div class="w-full sm:w-[360px]">
+                                <!-- Above Bar (Right-Aligned): Time Remaining -->
+                                <div class="flex items-center justify-end text-[12px] text-[#a3aab3] mb-1">
+                                    <span id="steam-eta-text">Calculating...</span>
+                                </div>
+
+                                <!-- Progress Bar: 6px Height Rounded Bar (#0e1014 track, #1a9fff fill) -->
+                                <div class="w-full h-[6px] bg-[#0e1014] rounded-full overflow-hidden">
+                                    <div id="steam-progress-fill" class="h-full bg-[#1a9fff] transition-all duration-100" style="width: 0%"></div>
+                                </div>
+
+                                <!-- Below Bar: Download PNG Icon + GB and Disk PNG Icon + GB -->
+                                <div class="flex items-center justify-between text-[12px] text-[#8f98a0] mt-1.5">
+                                    <span class="flex items-center gap-1.5">
+                                        <img src="images/steam-icon-network.png" data-png-filename="images/steam-icon-network.png" alt="Network" onerror="applyPngPlaceholder(this)" class="w-3.5 h-3.5 object-contain">
+                                        <span id="steam-dl-counter">0.00 GB / 212.00 GB</span>
+                                    </span>
+                                    <span class="flex items-center gap-1.5">
+                                        <img src="images/steam-icon-disk.png" data-png-filename="images/steam-icon-disk.png" alt="Disk" onerror="applyPngPlaceholder(this)" class="w-3.5 h-3.5 object-contain">
+                                        <span id="steam-disk-counter">0.00 GB / 212.00 GB</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Far Right: Square Icon Buttons for Pause/Resume and Cancel/Back (PNG Icons) -->
+                            <div class="flex items-center gap-2 self-end sm:self-center">
+                                <button onclick="togglePlayPause()" class="w-8 h-8 rounded-[3px] bg-[#2a313d] hover:bg-[#384152] text-[#dcdedf] flex items-center justify-center transition p-2" title="Pause / Resume">
+                                    <img src="images/steam-icon-pause.png" data-png-filename="images/steam-icon-pause.png" alt="Pause" onerror="applyPngPlaceholder(this)" class="w-full h-full object-contain">
+                                </button>
+                                <button onclick="returnToSplash()" class="w-8 h-8 rounded-[3px] bg-[#2a313d] hover:bg-rose-600/80 text-[#dcdedf] hover:text-white flex items-center justify-center transition p-2" title="Cancel Download">
+                                    <img src="images/steam-icon-close.png" data-png-filename="images/steam-icon-close.png" alt="Cancel" onerror="applyPngPlaceholder(this)" class="w-full h-full object-contain">
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Steam Client Footer Bar (height: 44px, #171a21) -->
+            <div class="h-[44px] px-5 bg-[#171a21] border-t border-black/60 flex items-center justify-between text-[12px] text-[#8f98a0] flex-shrink-0">
+                <div class="flex items-center gap-2 hover:text-white cursor-pointer">
+                    <span class="w-4 h-4 rounded-xs border border-[#8f98a0] inline-flex items-center justify-center text-[11px] leading-none">+</span>
+                    <span>Add a Game</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <img src="images/steam-icon-downloads-footer.png" data-png-filename="images/steam-icon-downloads-footer.png" alt="Downloads Status" onerror="applyPngPlaceholder(this)" class="w-4 h-4 object-contain">
+                    <div class="flex flex-col items-center">
+                        <span id="steam-footer-summary" class="text-[11px] font-bold uppercase tracking-wider text-[#1a9fff]">MANAGE DOWNLOADS</span>
+                        <div class="w-28 h-[3px] bg-[#2a313d] rounded-full overflow-hidden mt-0.5">
+                            <div id="steam-footer-bar" class="h-full bg-[#1a9fff]" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 hover:text-white cursor-pointer">
+                    <img src="images/steam-icon-friends.png" data-png-filename="images/steam-icon-friends.png" alt="Friends & Chat" onerror="applyPngPlaceholder(this)" class="w-4 h-4 object-contain">
+                    <span>Friends & Chat</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= AUTHENTIC PLATFORM NOTIFICATION TOASTS ================= -->
+    
+    <!-- 1. PS5 Upper-Right Notification Toast -->
+    <div id="toast-ps5" class="hidden fixed top-8 right-8 z-50 toast-ps5">
+        <div class="bg-[#1b2028]/95 backdrop-blur-2xl border border-white/25 rounded-2xl p-4 shadow-[0_15px_40px_rgba(0,0,0,0.75)] flex items-center gap-4 min-w-[320px]">
+            <img src="images/art-gtavi-cover-square.png" data-png-filename="images/art-gtavi-cover-square.png" alt="GTA VI" onerror="applyPngPlaceholder(this)" class="w-12 h-12 rounded-lg object-cover flex-shrink-0">
+            <div class="flex-1">
+                <div class="text-sm font-medium text-white">Grand Theft Auto VI</div>
+                <div class="text-xs text-[#c7ccd4] mt-0.5">Installed.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Xbox Bottom-Center Toast -->
+    <div id="toast-xbox" class="hidden fixed bottom-8 left-1/2 z-50 toast-xbox xbox-font">
+        <div class="bg-[#107C10] border-2 border-[#2ca22c] rounded-full px-6 py-3.5 shadow-[0_15px_45px_rgba(16,124,16,0.75)] flex items-center gap-4 min-w-[330px]">
+            <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-lg flex-shrink-0 p-1.5">
+                <img src="images/logo-xbox.png" data-png-filename="images/logo-xbox.png" alt="Xbox" onerror="applyPngPlaceholder(this)" class="w-full h-full object-contain">
+            </div>
+            <div>
+                <div class="text-sm font-bold text-white">Grand Theft Auto VI is ready to start</div>
+                <div class="text-xs text-emerald-100">Hold Xbox button to launch</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Steam Bottom-Right Toast -->
+    <div id="toast-steam" class="hidden fixed bottom-12 right-4 z-50 toast-steam">
+        <div class="bg-[#1e232c] border-l-4 border-[#1a9fff] rounded-xs p-3.5 shadow-[0_15px_40px_rgba(0,0,0,0.85)] flex items-center gap-3.5 min-w-[290px]">
+            <img src="images/art-gtavi-cover-square.png" data-png-filename="images/art-gtavi-cover-square.png" alt="GTA VI" onerror="applyPngPlaceholder(this)" class="w-11 h-11 rounded-xs object-cover flex-shrink-0">
+            <div>
+                <div class="text-[11px] font-bold uppercase tracking-wider text-[#1a9fff]">Download Complete</div>
+                <div class="text-sm font-bold text-white">Grand Theft Auto VI</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= APPLICATION LOGIC ================= -->
+    <script>
+        // =========================================================================
+        // EASY-TO-EDIT PLATFORM FILE SIZES (in GB)
+        // Change the numbers below to adjust the download size for each platform:
+        // =========================================================================
+        const PLATFORM_FILE_SIZES_GB = {
+            ps5:   212.0, // PlayStation 5 file size in GB
+            xbox:  225.0, // Xbox Series X|S file size in GB
+            steam: 250.0  // Steam (PC) file size in GB
+        };
+
+        function getActiveTotalGB(platform = state.activePlatform) {
+            return PLATFORM_FILE_SIZES_GB[platform] || 212.0;
+        }
+
+        // Average consumer SSD speeds (MB/s):
+        // _c = max sustained real-world write ceiling (MB/s), _r = average sustained install/unpack rate (MB/s)
+        const _pCfg = {
+            ps5:   { label: 'PlayStation 5',   _c: 1200, _r: 650 },
+            xbox:  { label: 'Xbox Series X|S', _c: 1000, _r: 500 },
+            steam: { label: 'Steam',           _c: 1050, _r: 550 }
+        };
+
+        // Offline lookup for average fixed broadband download speed (Mbps) based on browser timezone
+        const TIMEZONE_SPEED_MAP = {
+            // North America
+            'America/Los_Angeles': 260,
+            'America/Vancouver': 250,
+            'America/Denver': 245,
+            'America/Phoenix': 250,
+            'America/Chicago': 255,
+            'America/Winnipeg': 230,
+            'America/New_York': 265,
+            'America/Toronto': 260,
+            'America/Halifax': 235,
+            'America/Mexico_City': 95,
+            // South America
+            'America/Santiago': 275,
+            'America/Sao_Paulo': 175,
+            'America/Buenos_Aires': 95,
+            'America/Bogota': 125,
+            'America/Lima': 105,
+            // Europe
+            'Europe/London': 135,
+            'Europe/Dublin': 160,
+            'Europe/Lisbon': 195,
+            'Europe/Madrid': 235,
+            'Europe/Paris': 245,
+            'Europe/Amsterdam': 205,
+            'Europe/Brussels': 175,
+            'Europe/Berlin': 110,
+            'Europe/Zurich': 240,
+            'Europe/Rome': 95,
+            'Europe/Vienna': 130,
+            'Europe/Warsaw': 165,
+            'Europe/Prague': 135,
+            'Europe/Stockholm': 190,
+            'Europe/Oslo': 185,
+            'Europe/Copenhagen': 230,
+            'Europe/Helsinki': 160,
+            'Europe/Bucharest': 235,
+            'Europe/Athens': 65,
+            'Europe/Istanbul': 55,
+            // Asia & Middle East
+            'Asia/Singapore': 300,
+            'Asia/Hong_Kong': 285,
+            'Asia/Tokyo': 210,
+            'Asia/Seoul': 250,
+            'Asia/Taipei': 235,
+            'Asia/Shanghai': 220,
+            'Asia/Bangkok': 240,
+            'Asia/Kuala_Lumpur': 140,
+            'Asia/Manila': 95,
+            'Asia/Jakarta': 45,
+            'Asia/Kolkata': 65,
+            'Asia/Dubai': 290,
+            'Asia/Riyadh': 130,
+            'Asia/Jerusalem': 215,
+            // Oceania
+            'Pacific/Auckland': 205,
+            'Australia/Sydney': 85,
+            'Australia/Melbourne': 85,
+            'Australia/Brisbane': 85,
+            'Australia/Perth': 80,
+            // Africa
+            'Africa/Johannesburg': 55,
+            'Africa/Cairo': 65,
+            'Africa/Lagos': 35,
+            'Africa/Nairobi': 40
+        };
+
+        const REGION_PREFIX_SPEED_MAP = {
+            'America/': 220,
+            'Europe/': 160,
+            'Asia/': 150,
+            'Australia/': 85,
+            'Pacific/': 145,
+            'Africa/': 50
+        };
+
+        function getAverageSpeedByTimezone() {
+            try {
+                const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+                if (TIMEZONE_SPEED_MAP[tz]) {
+                    return TIMEZONE_SPEED_MAP[tz];
+                }
+                for (const [prefix, speed] of Object.entries(REGION_PREFIX_SPEED_MAP)) {
+                    if (tz.startsWith(prefix)) {
+                        return speed;
+                    }
+                }
+            } catch (e) {}
+            return 140; // Global average fallback (Mbps)
+        }
+
+        const state = {
+            inSplash: true,
+            activePlatform: 'ps5',
+            username: 'ViceCity_86',
+            isPlaying: false,
+            stage: 'downloading',
+            soundEnabled: true,
+            speedMbps: getAverageSpeedByTimezone(),
+            unit: 'Mbps',
+            downloadedGB: 0,
+            installedGB: 0,
+            completed: false,
+            peakMbps: 0,
+            peakMBps: 0,
+            rampProgress: 0,
+            currentNetMbps: 0,
+            currentDiskMBps: 0,
+            smoothedNetMbps: 0,
+            smoothedDiskMBps: 0,
+            driftCurrent: 0,
+            driftTarget: 0,
+            driftTimer: 0,
+            slowdownCooldown: 12,
+            slowdownActive: false,
+            slowdownElapsed: 0,
+            slowdownDuration: 4,
+            slowdownDepth: 0.55,
+            slowdownDiskBoost: 1.0,
+            xboxHistory: new Array(38).fill(0),
+            steamNetHistory: new Array(52).fill(0),
+            steamDiskHistory: new Array(52).fill(0)
+        };
+        window.state = state;
+
+        function resetDynamicThroughputState() {
+            state.rampProgress = 0;
+            state.currentNetMbps = 0;
+            state.currentDiskMBps = 0;
+            state.smoothedNetMbps = 0;
+            state.smoothedDiskMBps = 0;
+            state.driftCurrent = 0;
+            state.driftTarget = 0;
+            state.driftTimer = 0;
+            state.slowdownCooldown = 9 + Math.random() * 8;
+            state.slowdownActive = false;
+            state.slowdownElapsed = 0;
+            state.slowdownDuration = 3.5;
+            state.slowdownDepth = 0.6;
+            state.slowdownDiskBoost = 1.0;
+        }
+
+        function refreshAllPngPlaceholders() {
+            document.querySelectorAll('img[data-png-filename]').forEach(img => {
+                if (img.complete && img.naturalWidth === 0) {
+                    window.applyPngPlaceholder(img);
+                }
+            });
+        }
+
+        function handleUsernameInput(val) {
+            const clean = (val || '').trim() || 'ViceCity_86';
+            state.username = clean;
+            syncUsernameAcrossPlatforms();
+        }
+
+        function syncUsernameAcrossPlatforms() {
+            const name = state.username || 'ViceCity_86';
+
+            // 1. PlayStation 5 Header
+            const ps5UserEl = document.getElementById('ps5-username');
+            if (ps5UserEl) ps5UserEl.textContent = name;
+
+            // 2. Xbox Series X|S Profile Cluster
+            const xboxUserEl = document.getElementById('xbox-username');
+            if (xboxUserEl) xboxUserEl.textContent = name;
+
+            // 3. Steam Desktop Client (Top-Right Account Pill + Main Uppercase Navigation Tab)
+            const steamTopUserEl = document.getElementById('steam-top-username');
+            const steamNavUserEl = document.getElementById('steam-nav-username');
+            if (steamTopUserEl) steamTopUserEl.textContent = name;
+            if (steamNavUserEl) steamNavUserEl.textContent = name.toUpperCase();
+
+            // Re-render dynamic user avatar PNGs if using the generated placeholder
+            document.querySelectorAll('img.user-avatar-img').forEach(img => {
+                if (img.dataset.fallbackApplied === 'true') {
+                    img.src = generatePngDataUrl('images/art-user-avatar.png');
+                }
+            });
+        }
+
+        function _effNetMbps(p = state.activePlatform) {
+            return Math.min(state.speedMbps, _pCfg[p]._c * 8);
+        }
+
+        // --- Web Audio API Synthesizer for Console Notification Chimes ---
+        let audioCtx = null;
+        function playNotificationSound(platform) {
+            if (!state.soundEnabled) return;
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                const now = audioCtx.currentTime;
+
+                if (platform === 'ps5') {
+                    const freqs = [587.33, 880, 1174.66];
+                    freqs.forEach((f, idx) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(f, now + idx * 0.09);
+                        gain.gain.setValueAtTime(0.12, now + idx * 0.09);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.09 + 0.65);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start(now + idx * 0.09);
+                        osc.stop(now + idx * 0.09 + 0.7);
+                    });
+                } else if (platform === 'xbox') {
+                    const notes = [523.25, 659.25, 783.99, 1046.5];
+                    notes.forEach((f, idx) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(f, now + idx * 0.07);
+                        gain.gain.setValueAtTime(0.14, now + idx * 0.07);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.75);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start(now + idx * 0.07);
+                        osc.stop(now + idx * 0.07 + 0.8);
+                    });
+                } else if (platform === 'steam') {
+                    const notes = [440, 659.25];
+                    notes.forEach((f, idx) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(f, now + idx * 0.12);
+                        gain.gain.setValueAtTime(0.12, now + idx * 0.12);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 0.45);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start(now + idx * 0.12);
+                        osc.stop(now + idx * 0.12 + 0.5);
+                    });
+                }
+            } catch (e) {}
+        }
+
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            document.getElementById('sound-label-on').classList.toggle('hidden', !state.soundEnabled);
+            document.getElementById('sound-label-off').classList.toggle('hidden', state.soundEnabled);
+        }
+
+        // --- Splash Screen Platform Selection ---
+        function selectSplashPlatform(platform) {
+            state.activePlatform = platform;
+
+            const styles = {
+                ps5: 'flex flex-col items-start p-4 rounded-2xl border-2 transition-all text-left bg-[#0070d1]/20 border-[#00a2ff] shadow-[0_0_25px_rgba(0,112,209,0.35)]',
+                xbox: 'flex flex-col items-start p-4 rounded-2xl border-2 transition-all text-left bg-[#107C10]/20 border-[#2ca22c] shadow-[0_0_25px_rgba(16,124,16,0.35)]',
+                steam: 'flex flex-col items-start p-4 rounded-2xl border-2 transition-all text-left bg-[#1a9fff]/20 border-[#1a9fff] shadow-[0_0_25px_rgba(26,159,255,0.35)]',
+                inactive: 'flex flex-col items-start p-4 rounded-2xl border-2 transition-all text-left bg-slate-900/70 border-white/10 hover:border-white/25'
+            };
+
+            ['ps5', 'xbox', 'steam'].forEach(p => {
+                const btn = document.getElementById(`splash-plat-${p}`);
+                btn.className = (p === platform) ? styles[p] : styles.inactive;
+            });
+
+            const splashSizeEl = document.getElementById('splash-download-size');
+            if (splashSizeEl) {
+                splashSizeEl.textContent = `${getActiveTotalGB(platform).toFixed(2)} GB`;
+            }
+
+            updateSpeedInputsUI();
+        }
+
+        // --- Launch Simulation ("Download Now") ---
+        function startDownloadNow() {
+            const nameInput = document.getElementById('splash-username-input');
+            if (nameInput) {
+                handleUsernameInput(nameInput.value);
+            }
+
+            state.inSplash = false;
+            state.isPlaying = true;
+            state.stage = 'downloading';
+            state.downloadedGB = 0;
+            state.installedGB = 0;
+            state.completed = false;
+            state.peakMbps = 0;
+            state.peakMBps = 0;
+            resetDynamicThroughputState();
+            state.xboxHistory.fill(0);
+            state.steamNetHistory.fill(0);
+            state.steamDiskHistory.fill(0);
+            hideAllToasts();
+
+            document.getElementById('splash-screen').classList.add('hidden');
+            document.getElementById('floating-sim-pill').classList.remove('hidden');
+            document.getElementById('sim-main').classList.remove('hidden');
+
+            ['ps5', 'xbox', 'steam'].forEach(p => {
+                const view = document.getElementById(`view-${p}`);
+                if (p === state.activePlatform) {
+                    view.classList.remove('hidden');
+                } else {
+                    view.classList.add('hidden');
+                }
+            });
+
+            syncPlayPauseButtonUI();
+            updateSpeedInputsUI();
+            setTimeout(() => {
+                resizeCanvases();
+                renderUI(0, 0);
+            }, 20);
+        }
+
+        // --- Return to Splash Screen ---
+        function returnToSplash() {
+            state.isPlaying = false;
+            state.inSplash = true;
+            hideAllToasts();
+
+            document.getElementById('floating-sim-pill').classList.add('hidden');
+            document.getElementById('sim-main').classList.add('hidden');
+            document.getElementById('splash-screen').classList.remove('hidden');
+
+            updateSpeedInputsUI();
+        }
+
+        // --- Speed Input & Unit Conversion ---
+        function updateSpeedInputsUI() {
+            const splashInput = document.getElementById('splash-speed-input');
+            const headerInput = document.getElementById('speed-input');
+            const splashUnitBtn = document.getElementById('splash-unit-btn');
+            const headerUnitBtn = document.getElementById('unit-toggle-btn');
+            const splashHint = document.getElementById('splash-converted-hint');
+
+            splashUnitBtn.textContent = state.unit;
+            headerUnitBtn.textContent = state.unit;
+
+            if (state.unit === 'Mbps') {
+                const displayVal = Number(state.speedMbps.toFixed(1));
+                splashInput.value = displayVal;
+                headerInput.value = displayVal;
+                const mbs = state.speedMbps / 8;
+                const formattedMBs = mbs >= 100 ? mbs.toFixed(0) : mbs.toFixed(1);
+                splashHint.textContent = `= ${formattedMBs} MB/s`;
+            } else {
+                const userMBs = state.speedMbps / 8;
+                const displayVal = Number(userMBs.toFixed(1));
+                splashInput.value = displayVal;
+                headerInput.value = displayVal;
+                splashHint.textContent = `= ${state.speedMbps.toFixed(0)} Mbps`;
+            }
+        }
+
+        function handleSpeedNumberInput(val) {
+            const num = parseFloat(val);
+            if (isNaN(num) || num <= 0) return;
+
+            if (state.unit === 'Mbps') {
+                state.speedMbps = Math.min(200000, num);
+            } else {
+                state.speedMbps = Math.min(200000, num * 8);
+            }
+
+            const mbs = state.speedMbps / 8;
+            const formattedMBs = mbs >= 100 ? mbs.toFixed(0) : mbs.toFixed(1);
+
+            if (state.unit === 'Mbps') {
+                document.getElementById('splash-converted-hint').textContent = `= ${formattedMBs} MB/s`;
+            } else {
+                document.getElementById('splash-converted-hint').textContent = `= ${state.speedMbps.toFixed(0)} Mbps`;
+            }
+
+            if (state.inSplash) {
+                document.getElementById('speed-input').value = val;
+            } else {
+                document.getElementById('splash-speed-input').value = val;
+            }
+        }
+
+        function toggleSpeedUnit() {
+            state.unit = state.unit === 'Mbps' ? 'MB/s' : 'Mbps';
+            updateSpeedInputsUI();
+        }
+
+        // --- Pause / Resume Controls ---
+        function syncPlayPauseButtonUI() {
+            const xboxPauseBtn = document.getElementById('xbox-pause-all-btn');
+            const steamHeroPauseBtn = document.getElementById('steam-hero-pause-btn');
+
+            if (state.isPlaying) {
+                if (xboxPauseBtn) xboxPauseBtn.textContent = 'Pause all';
+                if (steamHeroPauseBtn) steamHeroPauseBtn.textContent = 'Pause';
+            } else {
+                if (xboxPauseBtn) xboxPauseBtn.textContent = 'Resume all';
+                if (steamHeroPauseBtn) steamHeroPauseBtn.textContent = 'Resume';
+            }
+        }
+
+        function togglePlayPause() {
+            if (state.inSplash || state.completed) return;
+            state.isPlaying = !state.isPlaying;
+            if (!state.isPlaying) {
+                // Reset ramp so resuming also ramps back up from zero realistically
+                state.rampProgress = 0;
+                state.currentNetMbps = 0;
+                state.currentDiskMBps = 0;
+                state.smoothedNetMbps = 0;
+                state.smoothedDiskMBps = 0;
+                state.slowdownActive = false;
+                state.slowdownCooldown = 8 + Math.random() * 7;
+            }
+            syncPlayPauseButtonUI();
+        }
+
+        function hideAllToasts() {
+            ['ps5', 'xbox', 'steam'].forEach(p => {
+                document.getElementById(`toast-${p}`).classList.add('hidden');
+            });
+        }
+
+        function showPlatformToast(platform) {
+            hideAllToasts();
+            const toast = document.getElementById(`toast-${platform}`);
+            toast.classList.remove('hidden');
+            playNotificationSound(platform);
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 6000);
+        }
+
+        // --- Authentic Platform Time Formatters ---
+        function formatPS5Time(seconds) {
+            if (!isFinite(seconds) || seconds <= 0) return '0 seconds left';
+            if (seconds < 60) {
+                const s = Math.ceil(seconds);
+                return `${s} ${s === 1 ? 'second' : 'seconds'} left`;
+            }
+            const hrs = Math.floor(seconds / 3600);
+            const mins = Math.ceil((seconds % 3600) / 60);
+            if (hrs > 0) {
+                return `${hrs} ${hrs === 1 ? 'hour' : 'hours'} ${mins} ${mins === 1 ? 'minute' : 'minutes'} left`;
+            }
+            return `${mins} ${mins === 1 ? 'minute' : 'minutes'} left`;
+        }
+
+        function formatXboxClockETA(seconds) {
+            if (!isFinite(seconds) || seconds <= 0) return '00:00:00';
+            const hrs = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = Math.floor(seconds % 60);
+            return [hrs, mins, secs].map(v => String(v).padStart(2, '0')).join(':');
+        }
+
+        function formatSteamShortETA(seconds) {
+            if (!isFinite(seconds) || seconds <= 0) return '0s';
+            if (seconds < 60) return `${Math.ceil(seconds)}s`;
+            const hrs = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = Math.floor(seconds % 60);
+            if (hrs > 0) return `${hrs}h ${mins}m`;
+            return `${mins}m ${secs}s`;
+        }
+
+        // --- Live Canvas Charts (Xbox & Steam) ---
+        const xboxCanvas = document.getElementById('xbox-chart-canvas');
+        const xboxCtx = xboxCanvas.getContext('2d');
+        const steamCanvas = document.getElementById('steam-chart-canvas');
+        const steamCtx = steamCanvas.getContext('2d');
+
+        function resizeCanvases() {
+            [xboxCanvas, steamCanvas].forEach(c => {
+                if (!c) return;
+                const rect = c.getBoundingClientRect();
+                if (rect.width > 0 && rect.height > 0) {
+                    c.width = rect.width * window.devicePixelRatio;
+                    c.height = rect.height * window.devicePixelRatio;
+                }
+            });
+        }
+        window.addEventListener('resize', resizeCanvases);
+
+        function drawXboxChart() {
+            if (state.inSplash || state.activePlatform !== 'xbox') return;
+            const w = xboxCanvas.width;
+            const h = xboxCanvas.height;
+            if (w === 0 || h === 0) return;
+
+            xboxCtx.clearRect(0, 0, w, h);
+            const hist = state.xboxHistory;
+            const maxVal = Math.max(...hist, _effNetMbps('xbox') * 1.15, 10);
+            const barCount = hist.length;
+            const gap = 2 * window.devicePixelRatio;
+            const barWidth = Math.max(2, (w - gap * (barCount - 1)) / barCount);
+
+            hist.forEach((val, idx) => {
+                const ratio = Math.min(1, val / maxVal);
+                const barH = val > 0 ? Math.max(3, ratio * (h - 6)) : 1;
+                const x = idx * (barWidth + gap);
+                const y = h - barH;
+
+                xboxCtx.fillStyle = idx === barCount - 1 ? '#22b14c' : '#107c10';
+                xboxCtx.fillRect(x, y, barWidth, barH);
+            });
+        }
+
+        function drawSteamChart() {
+            if (state.inSplash || state.activePlatform !== 'steam') return;
+            const w = steamCanvas.width;
+            const h = steamCanvas.height;
+            if (w === 0 || h === 0) return;
+
+            steamCtx.clearRect(0, 0, w, h);
+            const netHist = state.steamNetHistory;
+            const diskHist = state.steamDiskHistory;
+            const maxVal = Math.max(...netHist, ...diskHist, (_effNetMbps('steam') / 8) * 1.25, 10);
+            const count = netHist.length;
+            const gap = 2 * window.devicePixelRatio;
+            const barWidth = Math.max(2, (w - gap * (count - 1)) / count);
+
+            netHist.forEach((val, idx) => {
+                const ratio = Math.min(1, val / maxVal);
+                const barH = val > 0 ? Math.max(2, ratio * (h - 10)) : 0;
+                const x = idx * (barWidth + gap);
+                const y = h - barH;
+                steamCtx.fillStyle = '#1a9fff';
+                steamCtx.fillRect(x, y, barWidth, barH);
+            });
+
+            steamCtx.beginPath();
+            steamCtx.strokeStyle = '#75b022';
+            steamCtx.lineWidth = 2 * window.devicePixelRatio;
+            diskHist.forEach((val, idx) => {
+                const ratio = Math.min(1, val / maxVal);
+                const x = idx * (barWidth + gap) + barWidth / 2;
+                const y = h - Math.max(2, ratio * (h - 10));
+                if (idx === 0) steamCtx.moveTo(x, y);
+                else steamCtx.lineTo(x, y);
+            });
+            steamCtx.stroke();
+        }
+
+        // --- Main Real-Time Simulation Loop ---
+        let lastFrameTime = performance.now();
+        let chartTickAccumulator = 0;
+
+        function handleCompletion() {
+            if (state.completed) return;
+            const totalGB = getActiveTotalGB();
+            state.completed = true;
+            state.stage = 'completed';
+            state.isPlaying = false;
+            state.downloadedGB = totalGB;
+            state.installedGB = totalGB;
+            syncPlayPauseButtonUI();
+            showPlatformToast(state.activePlatform);
+        }
+
+        function renderUI(effectiveNetworkMbps, effectiveDiskMBps) {
+            if (state.inSplash) return;
+
+            const totalGB = getActiveTotalGB();
+            const totalGBStr = totalGB.toFixed(2);
+            const isInstallingStage = state.stage === 'installing';
+            const activeGB = isInstallingStage ? state.installedGB : state.downloadedGB;
+            const rawPct = state.completed ? 100 : Math.min(100, (activeGB / totalGB) * 100);
+
+            const remainingStageGB = Math.max(0, totalGB - activeGB);
+            const etaThroughputMBps = isInstallingStage
+                ? state.smoothedDiskMBps
+                : (state.smoothedNetMbps / 8);
+            const isWarmingUp = state.isPlaying && state.rampProgress < 0.14 && activeGB < 0.05;
+            const remainingStageSeconds = (!isWarmingUp && etaThroughputMBps > 0.05)
+                ? (remainingStageGB * 1024) / etaThroughputMBps
+                : Infinity;
+
+            // 1. Render PlayStation 5 UI
+            if (state.activePlatform === 'ps5') {
+                document.getElementById('ps5-progress-fill').style.width = `${rawPct.toFixed(2)}%`;
+
+                if (state.completed) {
+                    document.getElementById('ps5-status-line').textContent = 'Version 1.000.000 • Installed';
+                    document.getElementById('ps5-gb-counter').textContent = `${totalGBStr} GB/${totalGBStr} GB`;
+                    document.getElementById('ps5-percent-text').textContent = '100%';
+                    document.getElementById('ps5-time-left').textContent = '';
+                } else if (isInstallingStage) {
+                    document.getElementById('ps5-status-line').textContent = state.isPlaying
+                        ? 'Copying update file...'
+                        : 'Version 1.000.000 • Paused';
+                    document.getElementById('ps5-gb-counter').textContent = `${totalGBStr} GB/${totalGBStr} GB`;
+                    document.getElementById('ps5-percent-text').textContent = `${Math.floor(rawPct)}%`;
+                    document.getElementById('ps5-time-left').textContent = state.isPlaying
+                        ? (isFinite(remainingStageSeconds) ? formatPS5Time(remainingStageSeconds) : 'Calculating...')
+                        : 'Paused';
+                } else {
+                    document.getElementById('ps5-status-line').textContent = state.isPlaying
+                        ? (isWarmingUp ? 'Version 1.000.000 • Calculating...' : 'Version 1.000.000')
+                        : 'Version 1.000.000 • Paused';
+                    document.getElementById('ps5-gb-counter').textContent = `${state.downloadedGB.toFixed(2)} GB/${totalGBStr} GB`;
+                    document.getElementById('ps5-percent-text').textContent = `${Math.floor(rawPct)}%`;
+                    document.getElementById('ps5-time-left').textContent = state.isPlaying
+                        ? (isFinite(remainingStageSeconds) ? formatPS5Time(remainingStageSeconds) : 'Calculating...')
+                        : '';
+                }
+            }
+
+            // 2. Render Xbox Series X|S UI
+            if (state.activePlatform === 'xbox') {
+                document.getElementById('xbox-progress-fill').style.width = `${rawPct.toFixed(2)}%`;
+
+                if (state.completed) {
+                    document.getElementById('xbox-top-speed').textContent = '0.00 Mbps';
+                    document.getElementById('xbox-status-text').textContent = 'Installed';
+                    document.getElementById('xbox-size-cluster').textContent = `${totalGBStr} GB of ${totalGBStr} GB`;
+                    document.getElementById('xbox-percent-text').textContent = '100%';
+                    document.getElementById('xbox-eta-clock').textContent = '';
+                    document.getElementById('xbox-speed-inline').textContent = '';
+                } else if (isInstallingStage) {
+                    document.getElementById('xbox-top-speed').textContent = '0.00 Mbps';
+                    document.getElementById('xbox-status-text').textContent = state.isPlaying ? 'Updating...' : 'Installation stopped';
+                    document.getElementById('xbox-size-cluster').textContent = `${totalGBStr} GB of ${totalGBStr} GB`;
+                    document.getElementById('xbox-percent-text').textContent = `${rawPct.toFixed(1)}%`;
+                    document.getElementById('xbox-eta-clock').textContent = state.isPlaying
+                        ? (isFinite(remainingStageSeconds) ? formatXboxClockETA(remainingStageSeconds) : 'Calculating...')
+                        : 'Paused';
+                    document.getElementById('xbox-speed-inline').textContent = '';
+                } else {
+                    document.getElementById('xbox-top-speed').textContent = state.isPlaying ? `${effectiveNetworkMbps.toFixed(2)} Mbps` : '0.00 Mbps';
+                    document.getElementById('xbox-status-text').textContent = state.isPlaying ? 'Installing...' : 'Installation stopped';
+                    document.getElementById('xbox-size-cluster').textContent = `${state.downloadedGB.toFixed(2)} GB of ${totalGBStr} GB`;
+                    document.getElementById('xbox-percent-text').textContent = `${rawPct.toFixed(1)}%`;
+                    document.getElementById('xbox-eta-clock').textContent = state.isPlaying
+                        ? (isFinite(remainingStageSeconds) ? formatXboxClockETA(remainingStageSeconds) : 'Calculating...')
+                        : 'Paused';
+                    document.getElementById('xbox-speed-inline').textContent = state.isPlaying ? `${effectiveNetworkMbps.toFixed(2)} Mbps` : '';
+                }
+            }
+
+            // 3. Render Steam UI
+            if (state.activePlatform === 'steam') {
+                const displayUnit = state.unit;
+                const netMBps = effectiveNetworkMbps / 8;
+
+                if (displayUnit === 'Mbps') {
+                    document.getElementById('steam-current-speed').textContent = (state.stage === 'downloading' && state.isPlaying)
+                        ? `${effectiveNetworkMbps.toFixed(1)} Mbps`
+                        : '0 bps';
+                    document.getElementById('steam-peak-speed').textContent = `${state.peakMbps.toFixed(1)} Mbps`;
+                    document.getElementById('steam-disk-usage').textContent = (state.isPlaying && !state.completed)
+                        ? `${(effectiveDiskMBps * 8).toFixed(1)} Mbps`
+                        : '0 bps';
+                } else {
+                    document.getElementById('steam-current-speed').textContent = (state.stage === 'downloading' && state.isPlaying)
+                        ? `${netMBps.toFixed(1)} MB/s`
+                        : '0 B/s';
+                    document.getElementById('steam-peak-speed').textContent = `${state.peakMBps.toFixed(1)} MB/s`;
+                    document.getElementById('steam-disk-usage').textContent = (state.isPlaying && !state.completed)
+                        ? `${effectiveDiskMBps.toFixed(1)} MB/s`
+                        : '0 B/s';
+                }
+
+                document.getElementById('steam-total-dl').textContent = `${state.downloadedGB.toFixed(1)} GB`;
+                document.getElementById('steam-progress-fill').style.width = `${rawPct.toFixed(2)}%`;
+                document.getElementById('steam-footer-bar').style.width = `${rawPct.toFixed(2)}%`;
+
+                const badge = document.getElementById('steam-stage-badge');
+                const heroSub = document.getElementById('steam-hero-sub');
+
+                if (state.completed) {
+                    badge.textContent = 'COMPLETED';
+                    heroSub.textContent = 'COMPLETED';
+                    document.getElementById('steam-percent-text').textContent = '100%';
+                    document.getElementById('steam-eta-text').textContent = 'Ready to play';
+                    document.getElementById('steam-dl-counter').textContent = `${totalGBStr} GB / ${totalGBStr} GB`;
+                    document.getElementById('steam-disk-counter').textContent = `${totalGBStr} GB / ${totalGBStr} GB`;
+                } else if (isInstallingStage) {
+                    badge.textContent = state.isPlaying ? 'INSTALLING' : 'PAUSED';
+                    heroSub.textContent = state.isPlaying ? 'INSTALLING' : 'PAUSED';
+                    document.getElementById('steam-percent-text').textContent = `${Math.floor(rawPct)}%`;
+                    document.getElementById('steam-eta-text').textContent = state.isPlaying
+                        ? (isFinite(remainingStageSeconds) ? formatSteamShortETA(remainingStageSeconds) : 'Calculating...')
+                        : 'Paused';
+                    document.getElementById('steam-dl-counter').textContent = `${totalGBStr} GB / ${totalGBStr} GB`;
+                    document.getElementById('steam-disk-counter').textContent = `${state.installedGB.toFixed(2)} GB / ${totalGBStr} GB`;
+                } else {
+                    badge.textContent = state.isPlaying ? 'DOWNLOADING' : 'PAUSED';
+                    heroSub.textContent = state.isPlaying ? 'DOWNLOADING' : 'PAUSED';
+                    document.getElementById('steam-percent-text').textContent = `${Math.floor(rawPct)}%`;
+                    document.getElementById('steam-eta-text').textContent = state.isPlaying
+                        ? (isFinite(remainingStageSeconds) ? formatSteamShortETA(remainingStageSeconds) : 'Calculating...')
+                        : 'Paused';
+                    document.getElementById('steam-dl-counter').textContent = `${state.downloadedGB.toFixed(2)} GB / ${totalGBStr} GB`;
+                    document.getElementById('steam-disk-counter').textContent = `${state.downloadedGB.toFixed(2)} GB / ${totalGBStr} GB`;
+                }
+            }
+        }
+
+        function tickSimulation(now) {
+            const dt = Math.min(0.1, (now - lastFrameTime) / 1000);
+            lastFrameTime = now;
+
+            if (!state.inSplash) {
+                const totalGB = getActiveTotalGB();
+                const cfg = _pCfg[state.activePlatform];
+                const maxTargetMbps = _effNetMbps(state.activePlatform);
+
+                let effectiveNetworkMbps = 0;
+                let effectiveDiskMBps = 0;
+
+                if (state.isPlaying && !state.completed) {
+                    // 1. Realistic TCP / CDN Connection Ramp-Up Curve (~8.5 seconds from 0 to full speed)
+                    const rampRate = state.stage === 'installing' ? 0.28 : (state.rampProgress < 0.18 ? 0.08 : 0.13);
+                    state.rampProgress = Math.min(1, state.rampProgress + dt * rampRate);
+                    // Smooth S-curve (smoothstep) so it starts gently, accelerates, and settles smoothly
+                    const sCurve = state.rampProgress * state.rampProgress * (3 - 2 * state.rampProgress);
+
+                    // 2. Continuous Organic Network Drift (smoothly interpolated random walk + micro-waves)
+                    state.driftTimer -= dt;
+                    if (state.driftTimer <= 0) {
+                        state.driftTimer = 0.35 + Math.random() * 0.55;
+                        state.driftTarget = (Math.random() - 0.52) * 0.09; // -4.7% to +4.3%
+                    }
+                    state.driftCurrent += (state.driftTarget - state.driftCurrent) * Math.min(1, dt * 3.5);
+                    const microWave = Math.sin(now * 0.0032) * 0.018 + Math.cos(now * 0.0075) * 0.012;
+                    const organicFactor = Math.max(0.88, Math.min(1.03, 1 + state.driftCurrent + microWave));
+
+                    // 3. Periodic Realistic Slowdowns (CDN chunk handoffs, packet pacing, or SSD write-cache flushes)
+                    let slowdownMultiplier = 1.0;
+                    let diskSlowdownMultiplier = 1.0;
+
+                    if (state.rampProgress > 0.75) {
+                        if (!state.slowdownActive) {
+                            state.slowdownCooldown -= dt;
+                            if (state.slowdownCooldown <= 0) {
+                                state.slowdownActive = true;
+                                state.slowdownElapsed = 0;
+                                const isHeavyCacheFlush = Math.random() < 0.35;
+                                state.slowdownDuration = isHeavyCacheFlush
+                                    ? (3.5 + Math.random() * 4.0)
+                                    : (2.0 + Math.random() * 3.0);
+                                // Heavy flush drops network to 22%-45% while disk stays busy; mild dip drops to 58%-78%
+                                state.slowdownDepth = isHeavyCacheFlush
+                                    ? (0.22 + Math.random() * 0.23)
+                                    : (0.58 + Math.random() * 0.20);
+                                state.slowdownDiskBoost = isHeavyCacheFlush ? 1.12 : 0.85;
+                            }
+                        } else {
+                            state.slowdownElapsed += dt;
+                            const p = state.slowdownElapsed / state.slowdownDuration;
+                            if (p >= 1) {
+                                state.slowdownActive = false;
+                                state.slowdownCooldown = 9 + Math.random() * 14;
+                            } else {
+                                // Smooth bell envelope (0 -> 1 -> 0) so speed dips and recovers organically
+                                const bell = Math.sin(Math.PI * p);
+                                slowdownMultiplier = 1 - bell * (1 - state.slowdownDepth);
+                                diskSlowdownMultiplier = 1 - bell * (1 - state.slowdownDiskBoost);
+                            }
+                        }
+                    }
+
+                    if (state.stage === 'downloading') {
+                        const targetInstantMbps = Math.min(
+                            cfg._c * 8,
+                            maxTargetMbps * sCurve * organicFactor * slowdownMultiplier
+                        );
+                        // Smoothly slew current network speed toward instantaneous target
+                        state.currentNetMbps += (targetInstantMbps - state.currentNetMbps) * Math.min(1, dt * 6.0);
+                        effectiveNetworkMbps = Math.max(0, state.currentNetMbps);
+
+                        const netMBps = effectiveNetworkMbps / 8;
+                        // Average consumer SSD activity during download (writing & decompressing incoming chunks)
+                        const targetDiskMBps = Math.min(
+                            cfg._c,
+                            netMBps * 1.18 * diskSlowdownMultiplier * (0.95 + Math.sin(now * 0.005) * 0.05)
+                        );
+                        state.currentDiskMBps += (targetDiskMBps - state.currentDiskMBps) * Math.min(1, dt * 5.0);
+                        effectiveDiskMBps = Math.max(0, state.currentDiskMBps);
+
+                        if (effectiveNetworkMbps > state.peakMbps) state.peakMbps = effectiveNetworkMbps;
+                        if (netMBps > state.peakMBps) state.peakMBps = netMBps;
+
+                        // Exponential moving average for stable, realistic ETA readouts
+                        const alpha = Math.min(1, dt * 1.8);
+                        state.smoothedNetMbps = state.smoothedNetMbps === 0
+                            ? effectiveNetworkMbps
+                            : state.smoothedNetMbps + (effectiveNetworkMbps - state.smoothedNetMbps) * alpha;
+
+                        const addedGB = (netMBps / 1024) * dt;
+                        state.downloadedGB += addedGB;
+
+                        if (state.downloadedGB >= totalGB) {
+                            state.downloadedGB = totalGB;
+                            state.stage = 'installing';
+                            state.installedGB = 0;
+                            state.rampProgress = 0.08;
+                            state.currentNetMbps = 0;
+                            state.smoothedNetMbps = 0;
+                            state.slowdownActive = false;
+                            state.slowdownCooldown = 6 + Math.random() * 6;
+                        }
+                    } else if (state.stage === 'installing') {
+                        effectiveNetworkMbps = 0;
+                        const targetInstallDiskMBps = Math.min(
+                            cfg._c,
+                            cfg._r * sCurve * organicFactor * slowdownMultiplier
+                        );
+                        state.currentDiskMBps += (targetInstallDiskMBps - state.currentDiskMBps) * Math.min(1, dt * 5.0);
+                        effectiveDiskMBps = Math.max(0, state.currentDiskMBps);
+
+                        const alpha = Math.min(1, dt * 1.8);
+                        state.smoothedDiskMBps = state.smoothedDiskMBps === 0
+                            ? effectiveDiskMBps
+                            : state.smoothedDiskMBps + (effectiveDiskMBps - state.smoothedDiskMBps) * alpha;
+
+                        const installedAddedGB = (effectiveDiskMBps / 1024) * dt;
+                        state.installedGB += installedAddedGB;
+
+                        if (state.installedGB >= totalGB) {
+                            state.installedGB = totalGB;
+                            handleCompletion();
+                        }
+                    }
+                }
+
+                chartTickAccumulator += dt;
+                if (chartTickAccumulator >= 0.12) {
+                    chartTickAccumulator = 0;
+                    state.xboxHistory.push(state.completed || state.stage === 'installing' ? 0 : effectiveNetworkMbps);
+                    state.xboxHistory.shift();
+
+                    state.steamNetHistory.push(state.completed || state.stage === 'installing' ? 0 : (effectiveNetworkMbps / 8));
+                    state.steamNetHistory.shift();
+
+                    state.steamDiskHistory.push(state.completed || !state.isPlaying ? 0 : effectiveDiskMBps);
+                    state.steamDiskHistory.shift();
+
+                    drawXboxChart();
+                    drawSteamChart();
+                }
+
+                renderUI(effectiveNetworkMbps, effectiveDiskMBps);
+            }
+
+            requestAnimationFrame(tickSimulation);
+        }
+
+        // --- Clock & Initialization ---
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+            const ps5Clock = document.getElementById('ps5-clock');
+            const xboxClock = document.getElementById('xbox-clock');
+            if (ps5Clock) ps5Clock.textContent = timeStr;
+            if (xboxClock) xboxClock.textContent = timeStr;
+        }
+
+        window.onload = function () {
+            refreshAllPngPlaceholders();
+            updateClock();
+            setInterval(updateClock, 15000);
+            selectSplashPlatform('ps5');
+            syncUsernameAcrossPlatforms();
+            updateSpeedInputsUI();
+            requestAnimationFrame(tickSimulation);
+        };
+    </script>
+</body>
+</html>
